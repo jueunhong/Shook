@@ -1,10 +1,24 @@
-import 'dart:io';
+import 'package:camera_app/auth_service.dart';
+import 'package:camera_app/login_Page.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
-void main() {
-  runApp(const MyApp());
+import 'home_page.dart';
+import 'my_page.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => AuthService()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -13,46 +27,16 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final user = context.read<AuthService>().currentUser();
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: TakePicture(),
-    );
-  }
-}
-
-class TakePicture extends StatefulWidget {
-  const TakePicture({super.key});
-
-  @override
-  State<TakePicture> createState() => _TakePictureState();
-}
-
-class _TakePictureState extends State<TakePicture> {
-  final picker = ImagePicker();
-  File? _image;
-
-  Future getImageFromCam(ImageSource imageSource) async {
-    final image = await picker.pickImage(source: imageSource);
-    setState(() {
-      _image = File(image!.path);
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: _image == null
-            ? Text("No image selected")
-            : Image.file(File(_image!.path)),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          getImageFromCam(ImageSource.camera);
-        },
-        child: Icon(CupertinoIcons.camera),
-        tooltip: "take picture!",
-      ),
+      initialRoute: 'login',
+      routes: {
+        "login": (BuildContext context) => LoginPage(),
+        "homepage": (BuildContext context) => TakePicture(),
+        "mypage": (BuildContext context) => MyPage(),
+      },
+      // home: user == null ? LoginPage() : TakePicture(),
     );
   }
 }
