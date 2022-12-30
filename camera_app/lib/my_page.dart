@@ -15,7 +15,7 @@ class MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<MyPage> {
-  final user = FirebaseAuth.instance.currentUser?.email;
+  final userEmail = FirebaseAuth.instance.currentUser?.email;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,7 +43,7 @@ class _MyPageState extends State<MyPage> {
             SizedBox(
               height: 15,
             ),
-            Center(child: Text(user.toString())),
+            Center(child: Text(userEmail.toString())),
             SizedBox(
               height: 30,
             ),

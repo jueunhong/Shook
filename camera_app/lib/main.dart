@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
         "homepage": (BuildContext context) => TakePicture(),
         "mypage": (BuildContext context) => MyPage(),
       },
-      // home: user == null ? LoginPage() : TakePicture(),
+      home: user == null ? LoginPage() : TakePicture(),
     );
   }
 }
