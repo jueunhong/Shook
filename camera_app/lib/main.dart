@@ -1,11 +1,13 @@
 import 'package:camera_app/auth_service.dart';
-import 'package:camera_app/login_Page.dart';
+import 'package:camera_app/home_page.dart';
+import 'package:camera_app/login_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'home_page.dart';
+import 'mission_page.dart';
+import 'take_picture.dart';
 import 'my_page.dart';
 
 void main() async {
@@ -33,10 +35,10 @@ class MyApp extends StatelessWidget {
       initialRoute: 'login',
       routes: {
         "login": (BuildContext context) => LoginPage(),
-        "homepage": (BuildContext context) => TakePicture(),
+        "homepage": (BuildContext context) => HomePage(),
         "mypage": (BuildContext context) => MyPage(),
       },
-      home: user == null ? LoginPage() : TakePicture(),
+      home: user == null ? LoginPage() : HomePage(),
     );
   }
 }

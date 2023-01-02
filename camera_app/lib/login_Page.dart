@@ -1,8 +1,10 @@
 import 'package:camera_app/auth_service.dart';
-import 'package:camera_app/home_page.dart';
+import 'package:camera_app/take_picture.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+
+import 'home_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -106,7 +108,7 @@ class _LoginPageState extends State<LoginPage> {
                               Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => TakePicture()));
+                                      builder: (context) => HomePage()));
                             },
                             onError: (err) {
                               ScaffoldMessenger.of(context)
