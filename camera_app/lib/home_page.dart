@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -33,46 +32,86 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Camera Mission"),
-        actions: [
+      body: Stack(
+        children: [
           IconButton(
-            icon: Icon(CupertinoIcons.person_solid),
             onPressed: () {
               Navigator.push(
                   context, MaterialPageRoute(builder: (context) => MyPage()));
             },
-          )
+            icon: Icon(CupertinoIcons.plus),
+          ),
+          Container(
+              height: 400,
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                fit: BoxFit.cover,
+                image: AssetImage('assets/images/homepage_bg.png'),
+              ))),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(height: 100),
+              Text(
+                "CATCH",
+                style: TextStyle(
+                    fontSize: 36,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold),
+              ),
+              Container(
+                height: 360,
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10)),
+                margin: EdgeInsets.only(top: 80, right: 35, left: 35),
+                child: StreamBuilder(
+                    stream: getMissionsFromFirestore(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return Text("Error: ${snapshot.error}");
+                      }
+                      if (!snapshot.hasData) {
+                        return Center(child: Text("😭 No missions yet"));
+                      }
+                      final missions = snapshot.data;
+                      return ListView.separated(
+                          itemCount: missions!.length,
+                          separatorBuilder: (context, index) => Divider(),
+                          itemBuilder: (context, index) {
+                            final mission = missions[index];
+                            return ListTile(
+                              title: Text(mission.missionTitle),
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => MissionPage(
+                                              mission: mission,
+                                            )));
+                              },
+                            );
+                          });
+                    }),
+              ),
+            ],
+          ),
+          Positioned(
+            top: 20,
+            right: 0,
+            child: IconButton(
+              icon: Icon(
+                CupertinoIcons.person_solid,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => MyPage()));
+              },
+            ),
+          ),
         ],
       ),
-      body: StreamBuilder(
-          stream: getMissionsFromFirestore(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return Text("Error: ${snapshot.error}");
-            }
-            if (!snapshot.hasData) {
-              return Center(child: Text("😭 No missions yet"));
-            }
-            final missions = snapshot.data;
-            return ListView.separated(
-                itemCount: missions!.length,
-                separatorBuilder: (context, index) => Divider(),
-                itemBuilder: (context, index) {
-                  final mission = missions[index];
-                  return ListTile(
-                    title: Text(mission.missionTitle),
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => MissionPage(
-                                    mission: mission,
-                                  )));
-                    },
-                  );
-                });
-          }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(context,

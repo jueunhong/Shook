@@ -48,25 +48,116 @@ class _MissionPageState extends State<MissionPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.mission.missionTitle),
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Text(widget.mission.missionTitle),
-            Text(widget.mission.missionDesc)
-          ],
+    return Container(
+      color: Color(0xff7D67E6),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Stack(children: [
+          Container(
+              margin: EdgeInsets.only(top: 60),
+              width: double.infinity,
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius:
+                      BorderRadius.only(topRight: Radius.circular(80)))),
+          Padding(
+            padding: const EdgeInsets.only(left: 15, right: 15),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 90,
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                      color: Color(0xffD9D9D9),
+                      borderRadius: BorderRadius.circular(15)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Text(
+                      "Mission",
+                      style: TextStyle(
+                          color: Color(0xff5F50B1),
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  widget.mission.missionTitle,
+                  style: TextStyle(
+                      color: Color(0xffA395EE),
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold),
+                ),
+                SizedBox(
+                  height: 30,
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                      color: Color(0xffD9D9D9),
+                      borderRadius: BorderRadius.circular(15)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Text(
+                      "Description",
+                      style: TextStyle(
+                          color: Color(0xff5F50B1),
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  widget.mission.missionDesc,
+                  style: TextStyle(
+                      color: Color(0xff636363),
+                      fontSize: 16,
+                      fontWeight: FontWeight.normal),
+                ),
+                SizedBox(
+                  height: 100,
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                      color: Color(0xffD9D9D9),
+                      borderRadius: BorderRadius.circular(15)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Text(
+                      "Participants",
+                      style: TextStyle(
+                          color: Color(0xff5F50B1),
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            top: 14,
+            child: IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: Icon(
+                  CupertinoIcons.arrow_left,
+                  color: Colors.white,
+                )),
+          )
+        ]),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            getImageFromCam(ImageSource.camera);
+          },
+          child: Icon(CupertinoIcons.camera),
+          tooltip: "take picture!",
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          getImageFromCam(ImageSource.camera);
-        },
-        child: Icon(CupertinoIcons.camera),
-        tooltip: "take picture!",
       ),
     );
   }
