@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -44,6 +45,33 @@ class _MissionPageState extends State<MissionPage> {
     imagesCollection.add(
       {'image': imageBase64, "user": userId},
     );
+  }
+
+  Stream<List<ImageFromMission>> getImagesFromMission() {
+    final imagesCollection = FirebaseFirestore.instance
+        .collection("missions")
+        .doc(widget.mission.missionId)
+        .collection("images")
+        .snapshots();
+    // Map the snapshots to a stream of lists of Map<String, dynamic> objects
+    return imagesCollection.map((snapshot) {
+      // Create a list of Map<String, dynamic> objects from the documents in the snapshot
+      return snapshot.docs.map((doc) {
+        // get the base64-encoded image data as a string
+        final imageDataString = doc.data()['image'] as String;
+        // decode the string to a Uint8List
+        final imageData = base64Decode(imageDataString);
+        // get the uploaderId
+        final uploaderId = doc.data()['user'] as String;
+        //create a map with the image data and uploaderId and docId
+        return ImageFromMission(
+            missionId: widget.mission.missionId,
+            missionUploaderId: widget.mission.missionUploader,
+            ImageId: doc.id,
+            ImageUrl: ByteData.view(imageData.buffer).buffer.asUint8List(),
+            ImageUploaderId: uploaderId);
+      }).toList();
+    });
   }
 
   @override
@@ -112,15 +140,18 @@ class _MissionPageState extends State<MissionPage> {
                 SizedBox(
                   height: 10,
                 ),
-                Text(
-                  widget.mission.missionDesc,
-                  style: TextStyle(
-                      color: Color(0xff636363),
-                      fontSize: 16,
-                      fontWeight: FontWeight.normal),
-                ),
                 SizedBox(
                   height: 100,
+                  child: Text(
+                    widget.mission.missionDesc,
+                    style: TextStyle(
+                        color: Color(0xff636363),
+                        fontSize: 16,
+                        fontWeight: FontWeight.normal),
+                  ),
+                ),
+                SizedBox(
+                  height: 30,
                 ),
                 Container(
                   decoration: BoxDecoration(
@@ -136,6 +167,39 @@ class _MissionPageState extends State<MissionPage> {
                     ),
                   ),
                 ),
+                // SizedBox(
+                //   height: 10,
+                // ),
+                SizedBox(
+                  height: 290,
+                  child: StreamBuilder(
+                      stream: getImagesFromMission(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasError) {
+                          return Center(
+                              child: Text("Error: ${snapshot.error}"));
+                        }
+                        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                          return Center(child: Text("😭 No images yet"));
+                        }
+                        final images = snapshot.data;
+                        return GridView.builder(
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                          ),
+                          itemCount: images!.length,
+                          itemBuilder: (context, index) {
+                            final image = images[index];
+                            return Image.memory(
+                              image.ImageUrl,
+                              height: 30,
+                              fit: BoxFit.cover,
+                            );
+                          },
+                        );
+                      }),
+                )
               ],
             ),
           ),
@@ -161,4 +225,20 @@ class _MissionPageState extends State<MissionPage> {
       ),
     );
   }
+}
+
+class ImageFromMission {
+  final String missionId;
+  final String missionUploaderId;
+  final String ImageId;
+  final Uint8List ImageUrl;
+  final String ImageUploaderId;
+
+  ImageFromMission({
+    required this.missionId,
+    required this.missionUploaderId,
+    required this.ImageUrl,
+    required this.ImageId,
+    required this.ImageUploaderId,
+  });
 }
