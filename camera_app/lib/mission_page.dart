@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'home_page.dart';
+import 'image_page.dart';
 
 class MissionPage extends StatefulWidget {
   const MissionPage({Key? key, required this.mission}) : super(key: key);
@@ -191,11 +192,19 @@ class _MissionPageState extends State<MissionPage> {
                           itemCount: images!.length,
                           itemBuilder: (context, index) {
                             final image = images[index];
-                            return Image.memory(
-                              image.ImageUrl,
-                              height: 30,
-                              fit: BoxFit.cover,
-                            );
+                            return GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              DetailImagePage(image: image)));
+                                },
+                                child: Image.memory(
+                                  image.ImageUrl,
+                                  height: 30,
+                                  fit: BoxFit.cover,
+                                ));
                           },
                         );
                       }),

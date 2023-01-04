@@ -34,15 +34,8 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       body: Stack(
         children: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => MyPage()));
-            },
-            icon: Icon(CupertinoIcons.plus),
-          ),
           Container(
-              height: 400,
+              height: 390,
               decoration: BoxDecoration(
                   image: DecorationImage(
                 fit: BoxFit.cover,
@@ -51,7 +44,7 @@ class _HomePageState extends State<HomePage> {
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: 100),
+              SizedBox(height: 120),
               Text(
                 "CATCH",
                 style: TextStyle(
@@ -64,7 +57,7 @@ class _HomePageState extends State<HomePage> {
                 decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10)),
-                margin: EdgeInsets.only(top: 80, right: 35, left: 35),
+                margin: EdgeInsets.only(top: 70, right: 35, left: 35),
                 child: StreamBuilder(
                     stream: getMissionsFromFirestore(),
                     builder: (context, snapshot) {
@@ -75,51 +68,109 @@ class _HomePageState extends State<HomePage> {
                         return Center(child: Text("😭 No missions yet"));
                       }
                       final missions = snapshot.data;
-                      return ListView.separated(
-                          itemCount: missions!.length,
-                          separatorBuilder: (context, index) => Divider(),
-                          itemBuilder: (context, index) {
-                            final mission = missions[index];
-                            return ListTile(
-                              title: Text(mission.missionTitle),
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => MissionPage(
-                                              mission: mission,
-                                            )));
-                              },
-                            );
-                          });
+                      return Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(15),
+                            child: Row(
+                              children: [
+                                Text(
+                                  'Missions',
+                                  style: TextStyle(
+                                      color: Color(0xff7B68E6),
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Spacer(),
+                                IconButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  CreateMissionPage()));
+                                    },
+                                    tooltip: "add Mission!",
+                                    icon: Image(
+                                        image: AssetImage(
+                                            'assets/icons/create_mission.png')))
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: ListView.separated(
+                                itemCount: missions!.length,
+                                separatorBuilder: (context, index) => Divider(),
+                                itemBuilder: (context, index) {
+                                  final mission = missions[index];
+                                  return ListTile(
+                                    title: Text(mission.missionTitle),
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => MissionPage(
+                                                    mission: mission,
+                                                  )));
+                                    },
+                                  );
+                                }),
+                          ),
+                        ],
+                      );
                     }),
               ),
             ],
           ),
-          Positioned(
-            top: 20,
-            right: 0,
-            child: IconButton(
-              icon: Icon(
-                CupertinoIcons.person_solid,
-                color: Colors.white,
-              ),
-              onPressed: () {
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => MyPage()));
-              },
-            ),
-          ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => CreateMissionPage()));
-        },
-        child: Icon(CupertinoIcons.plus),
-        tooltip: "add Mission!",
-      ),
+      bottomNavigationBar: BottomNavigationBar(
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+          backgroundColor: Color(0xff7E70E1),
+          type: BottomNavigationBarType.fixed,
+          items: [
+            BottomNavigationBarItem(
+              icon: IconButton(
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => HomePage()));
+                },
+                icon: Image(image: AssetImage('assets/icons/MissionList.png')),
+              ),
+              label: 'List',
+            ),
+            BottomNavigationBarItem(
+              icon: IconButton(
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => HomePage()));
+                },
+                icon: Image(image: AssetImage('assets/icons/Home.png')),
+              ),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: IconButton(
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => HomePage()));
+                },
+                icon: Image(image: AssetImage('assets/icons/Ranking.png')),
+              ),
+              label: 'Ranking',
+            ),
+            BottomNavigationBarItem(
+              icon: IconButton(
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => MyPage()));
+                },
+                icon: Image(image: AssetImage('assets/icons/MyPage.png')),
+              ),
+              label: 'MyPage',
+            ),
+          ]),
     );
   }
 }
@@ -140,71 +191,70 @@ class _CreateMissionPageState extends State<CreateMissionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Create Mission"),
-        ),
-        body: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  SizedBox(height: 16),
-                  Text(
-                    'Describe picture you want🔎',
-                    style: TextStyle(fontSize: 18),
+      appBar: AppBar(
+        title: Text("Create Mission"),
+      ),
+      body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                SizedBox(height: 16),
+                Text(
+                  'Describe picture you want🔎',
+                  style: TextStyle(fontSize: 18),
+                ),
+                SizedBox(height: 16),
+                TextFormField(
+                  controller: _titleController,
+                  decoration: InputDecoration(
+                    labelText: 'Title',
+                    hintText: 'Please enter a title',
                   ),
-                  SizedBox(height: 16),
-                  TextFormField(
-                    controller: _titleController,
-                    decoration: InputDecoration(
-                      labelText: 'Title',
-                      hintText: 'Please enter a title',
-                    ),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Please enter a title';
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter a title';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 16),
+                TextFormField(
+                  controller: _descController,
+                  decoration: InputDecoration(
+                    labelText: 'Description',
+                    hintText: 'Please enter a description',
+                  ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter a description';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        _formKey.currentState!.save();
+                        FirebaseFirestore.instance.collection("missions").add({
+                          'title': _titleController.text,
+                          'desc': _descController.text,
+                          'user': userId,
+                        });
                       }
-                      return null;
+                      Navigator.pop(context);
                     },
+                    child: Text("Post"),
                   ),
-                  SizedBox(height: 16),
-                  TextFormField(
-                    controller: _descController,
-                    decoration: InputDecoration(
-                      labelText: 'Description',
-                      hintText: 'Please enter a description',
-                    ),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Please enter a description';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 16),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          _formKey.currentState!.save();
-                          FirebaseFirestore.instance
-                              .collection("missions")
-                              .add({
-                            'title': _titleController.text,
-                            'desc': _descController.text,
-                            'user': userId,
-                          });
-                        }
-                        Navigator.pop(context);
-                      },
-                      child: Text("Post"),
-                    ),
-                  ),
-                ],
-              ),
-            )));
+                ),
+              ],
+            ),
+          )),
+    );
   }
 }
 
