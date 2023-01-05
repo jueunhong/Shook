@@ -1,6 +1,8 @@
 import 'package:camera_app/mission_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class DetailImagePage extends StatefulWidget {
@@ -16,7 +18,25 @@ class _DetailImagePageState extends State<DetailImagePage> {
   final userId = FirebaseAuth.instance.currentUser?.uid;
   bool canChoose = false;
 
-  Future<void> givePointsAndSetMissionCompleted() async {}
+  void givePointsAndSetMissionCompleted(SelectedImage selectedImage) async {
+    final imageUploaderDoc = FirebaseFirestore.instance
+        .collection('users')
+        .doc(selectedImage.ImageUploaderId);
+    final missionUploaderDoc = FirebaseFirestore.instance
+        .collection('users')
+        .doc(selectedImage.missionUploaderId);
+    final missionDoc = FirebaseFirestore.instance
+        .collection('missions')
+        .doc(selectedImage.missionId);
+
+    await imageUploaderDoc.update({'points': FieldValue.increment(10)});
+    await missionUploaderDoc.update({'points': FieldValue.increment(10)});
+    await missionDoc.update({
+      'isCompleted': true,
+      'selectedImageId': selectedImage.ImageId,
+      'selectedImageUploader': selectedImage.ImageUploaderId,
+    });
+  }
 
   @override
   void initState() {
@@ -56,30 +76,41 @@ class _DetailImagePageState extends State<DetailImagePage> {
                       height: 30,
                     ),
                     canChoose
-                        ? Container(
+                        ? SizedBox(
                             width: double.infinity,
-                            child: Column(
-                              children: [
-                                Text(
-                                  'CATCH!',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 24,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Color(0xff5F50B1),
+                              ),
+                              onPressed: () {
+                                givePointsAndSetMissionCompleted(SelectedImage(
+                                    missionId: widget.images[index].missionId,
+                                    missionUploaderId:
+                                        widget.images[index].missionUploaderId,
+                                    ImageId: widget.images[index].ImageId,
+                                    ImageUploaderId:
+                                        widget.images[index].ImageUploaderId));
+                              },
+                              child: Column(
+                                children: [
+                                  Text(
+                                    'CATCH!',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 24,
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  'I will select this picture',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                  ),
-                                )
-                              ],
+                                  Text(
+                                    'I will select this picture',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15),
-                              color: Color(0xff5F50B1),
-                            ))
+                          )
                         : Container(
                             height: 10,
                           )
@@ -101,4 +132,18 @@ class _DetailImagePageState extends State<DetailImagePage> {
           }),
     );
   }
+}
+
+class SelectedImage {
+  final String missionId;
+  final String missionUploaderId;
+  final String ImageId;
+  final String ImageUploaderId;
+
+  SelectedImage({
+    required this.missionId,
+    required this.missionUploaderId,
+    required this.ImageId,
+    required this.ImageUploaderId,
+  });
 }
