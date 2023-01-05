@@ -1,8 +1,12 @@
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'fonts.dart';
 
+import 'createmission_page.dart';
 import 'mission_page.dart';
 import 'my_page.dart';
 
@@ -48,12 +52,13 @@ class _HomePageState extends State<HomePage> {
               Text(
                 "CATCH",
                 style: TextStyle(
-                    fontSize: 36,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold),
+                  fontFamily: "Pretendard-ExtraBold",
+                  fontSize: 36,
+                  color: Colors.white,
+                ),
               ),
               Container(
-                height: 360,
+                height: 350,
                 decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10)),
@@ -65,7 +70,13 @@ class _HomePageState extends State<HomePage> {
                         return Text("Error: ${snapshot.error}");
                       }
                       if (!snapshot.hasData) {
-                        return Center(child: Text("😭 No missions yet"));
+                        return Center(
+                            child: Text(
+                          "😭 No missions yet",
+                          style: TextStyle(
+                            fontFamily: "Pretendard-SemiBold",
+                          ),
+                        ));
                       }
                       final missions = snapshot.data;
                       return Column(
@@ -77,9 +88,11 @@ class _HomePageState extends State<HomePage> {
                                 Text(
                                   'Missions',
                                   style: TextStyle(
+                                      fontFamily:
+                                          MyfontsFamily.pretendardSemiBold,
                                       color: Color(0xff7B68E6),
                                       fontSize: 24,
-                                      fontWeight: FontWeight.bold),
+                                      fontWeight: FontWeight.w700),
                                 ),
                                 Spacer(),
                                 IconButton(
@@ -104,7 +117,11 @@ class _HomePageState extends State<HomePage> {
                                 itemBuilder: (context, index) {
                                   final mission = missions[index];
                                   return ListTile(
-                                    title: Text(mission.missionTitle),
+                                    title: Text(mission.missionTitle,
+                                        style: TextStyle(
+                                          fontFamily:
+                                              MyfontsFamily.pretendardMedium,
+                                        )),
                                     onTap: () {
                                       Navigator.push(
                                           context,
@@ -171,89 +188,6 @@ class _HomePageState extends State<HomePage> {
               label: 'MyPage',
             ),
           ]),
-    );
-  }
-}
-
-class CreateMissionPage extends StatefulWidget {
-  const CreateMissionPage({super.key});
-
-  @override
-  State<CreateMissionPage> createState() => _CreateMissionPageState();
-}
-
-class _CreateMissionPageState extends State<CreateMissionPage> {
-  final _formKey = GlobalKey<FormState>();
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _descController = TextEditingController();
-  final userId = FirebaseAuth.instance.currentUser?.uid;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Create Mission"),
-      ),
-      body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                SizedBox(height: 16),
-                Text(
-                  'Describe picture you want🔎',
-                  style: TextStyle(fontSize: 18),
-                ),
-                SizedBox(height: 16),
-                TextFormField(
-                  controller: _titleController,
-                  decoration: InputDecoration(
-                    labelText: 'Title',
-                    hintText: 'Please enter a title',
-                  ),
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter a title';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 16),
-                TextFormField(
-                  controller: _descController,
-                  decoration: InputDecoration(
-                    labelText: 'Description',
-                    hintText: 'Please enter a description',
-                  ),
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter a description';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        _formKey.currentState!.save();
-                        FirebaseFirestore.instance.collection("missions").add({
-                          'title': _titleController.text,
-                          'desc': _descController.text,
-                          'user': userId,
-                        });
-                      }
-                      Navigator.pop(context);
-                    },
-                    child: Text("Post"),
-                  ),
-                ),
-              ],
-            ),
-          )),
     );
   }
 }

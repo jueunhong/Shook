@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:camera_app/fonts.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -106,8 +107,10 @@ class _MissionPageState extends State<MissionPage> {
                     child: Text(
                       "Mission",
                       style: TextStyle(
-                          color: Color(0xff5F50B1),
-                          fontWeight: FontWeight.bold),
+                        fontFamily: MyfontsFamily.pretendardSemiBold,
+                        color: Color(0xff5F50B1),
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                 ),
@@ -117,6 +120,7 @@ class _MissionPageState extends State<MissionPage> {
                 Text(
                   widget.mission.missionTitle,
                   style: TextStyle(
+                      fontFamily: MyfontsFamily.pretendardSemiBold,
                       color: Color(0xffA395EE),
                       fontSize: 24,
                       fontWeight: FontWeight.bold),
@@ -133,6 +137,7 @@ class _MissionPageState extends State<MissionPage> {
                     child: Text(
                       "Description",
                       style: TextStyle(
+                          fontFamily: MyfontsFamily.pretendardSemiBold,
                           color: Color(0xff5F50B1),
                           fontWeight: FontWeight.bold),
                     ),
@@ -147,6 +152,7 @@ class _MissionPageState extends State<MissionPage> {
                     widget.mission.missionDesc,
                     style: TextStyle(
                         color: Color(0xff636363),
+                        fontFamily: MyfontsFamily.pretendardMedium,
                         fontSize: 16,
                         fontWeight: FontWeight.normal),
                   ),
@@ -163,6 +169,7 @@ class _MissionPageState extends State<MissionPage> {
                     child: Text(
                       "Participants",
                       style: TextStyle(
+                          fontFamily: MyfontsFamily.pretendardSemiBold,
                           color: Color(0xff5F50B1),
                           fontWeight: FontWeight.bold),
                     ),
@@ -197,8 +204,10 @@ class _MissionPageState extends State<MissionPage> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) =>
-                                              DetailImagePage(image: image)));
+                                          builder: (context) => DetailImagePage(
+                                                images: images,
+                                                index: index,
+                                              )));
                                 },
                                 child: Image.memory(
                                   image.ImageUrl,
