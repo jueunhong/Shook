@@ -21,7 +21,7 @@ class _DetailImagePageState extends State<DetailImagePage> {
   void givePointsAndSetMissionCompleted(SelectedImage selectedImage) async {
     final imageUploaderDoc = FirebaseFirestore.instance
         .collection('users')
-        .doc(selectedImage.ImageUploaderId);
+        .doc(selectedImage.imageUploaderId);
     final missionUploaderDoc = FirebaseFirestore.instance
         .collection('users')
         .doc(selectedImage.missionUploaderId);
@@ -29,13 +29,15 @@ class _DetailImagePageState extends State<DetailImagePage> {
         .collection('missions')
         .doc(selectedImage.missionId);
 
-    await imageUploaderDoc.update({'points': FieldValue.increment(10)});
-    await missionUploaderDoc.update({'points': FieldValue.increment(10)});
-    await missionDoc.update({
+    await imageUploaderDoc
+        .set({'points': FieldValue.increment(10)}, SetOptions(merge: true));
+    await missionUploaderDoc
+        .set({'points': FieldValue.increment(10)}, SetOptions(merge: true));
+    await missionDoc.set({
       'isCompleted': true,
-      'selectedImageId': selectedImage.ImageId,
-      'selectedImageUploader': selectedImage.ImageUploaderId,
-    });
+      'selectedImageId': selectedImage.imageId,
+      'selectedImageUploader': selectedImage.imageUploaderId,
+    }, SetOptions(merge: true));
   }
 
   @override
@@ -68,7 +70,7 @@ class _DetailImagePageState extends State<DetailImagePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image.memory(
-                      widget.images[index].ImageUrl,
+                      widget.images[index].imageUrl,
                       height: 380,
                       width: 260,
                       fit: BoxFit.cover,
@@ -88,9 +90,9 @@ class _DetailImagePageState extends State<DetailImagePage> {
                                     missionId: widget.images[index].missionId,
                                     missionUploaderId:
                                         widget.images[index].missionUploaderId,
-                                    ImageId: widget.images[index].ImageId,
-                                    ImageUploaderId:
-                                        widget.images[index].ImageUploaderId));
+                                    imageId: widget.images[index].imageId,
+                                    imageUploaderId:
+                                        widget.images[index].imageUploaderId));
                               },
                               child: Column(
                                 children: [
@@ -101,6 +103,8 @@ class _DetailImagePageState extends State<DetailImagePage> {
                                       fontSize: 24,
                                     ),
                                   ),
+                                  Text(widget.images[index].missionUploaderId),
+                                  Text(widget.images[index].imageUploaderId),
                                   Text(
                                     'I will select this picture',
                                     style: TextStyle(
@@ -138,13 +142,13 @@ class _DetailImagePageState extends State<DetailImagePage> {
 class SelectedImage {
   final String missionId;
   final String missionUploaderId;
-  final String ImageId;
-  final String ImageUploaderId;
+  final String imageId;
+  final String imageUploaderId;
 
   SelectedImage({
     required this.missionId,
     required this.missionUploaderId,
-    required this.ImageId,
-    required this.ImageUploaderId,
+    required this.imageId,
+    required this.imageUploaderId,
   });
 }

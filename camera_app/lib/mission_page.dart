@@ -69,9 +69,9 @@ class _MissionPageState extends State<MissionPage> {
         return ImageFromMission(
             missionId: widget.mission.missionId,
             missionUploaderId: widget.mission.missionUploader,
-            ImageId: doc.id,
-            ImageUrl: ByteData.view(imageData.buffer).buffer.asUint8List(),
-            ImageUploaderId: uploaderId);
+            imageId: doc.id,
+            imageUrl: ByteData.view(imageData.buffer).buffer.asUint8List(),
+            imageUploaderId: uploaderId);
       }).toList();
     });
   }
@@ -210,7 +210,7 @@ class _MissionPageState extends State<MissionPage> {
                                               )));
                                 },
                                 child: Image.memory(
-                                  image.ImageUrl,
+                                  image.imageUrl,
                                   height: 30,
                                   fit: BoxFit.cover,
                                 ));
@@ -248,15 +248,15 @@ class _MissionPageState extends State<MissionPage> {
 class ImageFromMission {
   final String missionId;
   final String missionUploaderId;
-  final String ImageId;
-  final Uint8List ImageUrl;
-  final String ImageUploaderId;
+  final String imageId;
+  final Uint8List imageUrl;
+  final String imageUploaderId;
 
   ImageFromMission({
     required this.missionId,
     required this.missionUploaderId,
-    required this.ImageUrl,
-    required this.ImageId,
-    required this.ImageUploaderId,
+    required this.imageUrl,
+    required this.imageId,
+    required this.imageUploaderId,
   });
 }
