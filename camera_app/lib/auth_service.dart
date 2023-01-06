@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -34,6 +35,17 @@ class AuthService extends ChangeNotifier {
       onError(e.message!);
     } catch (e) {
       onError(e.toString());
+    }
+
+    final uid = currentUser()!.uid;
+    String nickname = email;
+    final userCollection =
+        await FirebaseFirestore.instance.collection('users').doc(uid);
+    final snapshot = await userCollection.get();
+    if (snapshot.exists) {
+      nickname = snapshot.data()!['nickname'];
+    } else {
+      await userCollection.set({'nickname': email}, SetOptions(merge: true));
     }
   }
 

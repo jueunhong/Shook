@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:camera_app/ranking_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -171,7 +172,7 @@ class _HomePageState extends State<HomePage> {
               icon: IconButton(
                 onPressed: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => HomePage()));
+                      MaterialPageRoute(builder: (context) => RankingPage()));
                 },
                 icon: Image(image: AssetImage('assets/icons/Ranking.png')),
               ),

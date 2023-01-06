@@ -103,8 +103,6 @@ class _DetailImagePageState extends State<DetailImagePage> {
                                       fontSize: 24,
                                     ),
                                   ),
-                                  Text(widget.images[index].missionUploaderId),
-                                  Text(widget.images[index].imageUploaderId),
                                   Text(
                                     'I will select this picture',
                                     style: TextStyle(
