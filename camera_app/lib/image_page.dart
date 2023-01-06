@@ -50,6 +50,7 @@ class _DetailImagePageState extends State<DetailImagePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: PageView.builder(
+          controller: PageController(initialPage: widget.index),
           itemCount: widget.images.length,
           itemBuilder: (context, index) {
             return Stack(children: [
