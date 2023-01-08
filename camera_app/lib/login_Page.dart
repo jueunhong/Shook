@@ -216,6 +216,7 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController idController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -238,7 +239,7 @@ class _SignUpState extends State<SignUp> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                      height: 120,
+                      height: 90,
                     ),
                     Text('Sign Up',
                         style: TextStyle(
@@ -248,6 +249,31 @@ class _SignUpState extends State<SignUp> {
                         )),
                     SizedBox(
                       height: 40,
+                    ),
+                    Text('Your ID :',
+                        style: TextStyle(
+                          fontFamily: MyfontsFamily.pretendardSemiBold,
+                          color: Color(0xff6D71E6),
+                          fontSize: 16,
+                        )),
+                    SizedBox(
+                      height: 16,
+                    ),
+                    Container(
+                      height: 50,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: Color(0xffECECEC),
+                        borderRadius: BorderRadius.circular(90),
+                      ),
+                      child: TextField(
+                        controller: idController,
+                        obscureText: true,
+                        decoration: InputDecoration(border: InputBorder.none),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
                     ),
                     Text('Email :',
                         style: TextStyle(
@@ -313,6 +339,7 @@ class _SignUpState extends State<SignUp> {
                         onPressed: () {
                           AuthService authService = AuthService();
                           authService.signUp(
+                              id: idController.text,
                               email: emailController.text,
                               password: passwordController.text,
                               onSuccess: () {
@@ -320,6 +347,7 @@ class _SignUpState extends State<SignUp> {
                                     .showSnackBar(SnackBar(
                                   content: Text("회원가입 성공"),
                                 ));
+                                widget.changeSignUp();
                               },
                               onError: (err) {
                                 ScaffoldMessenger.of(context)

@@ -9,6 +9,7 @@ class AuthService extends ChangeNotifier {
   }
 
   void signUp({
+    required String id,
     required String email, // 이메일
     required String password, // 비밀번호
     required Function() onSuccess, // 가입 성공시 호출되는 함수
@@ -17,10 +18,13 @@ class AuthService extends ChangeNotifier {
     // 회원가입
     //이메일 및 비밀번호 입력 여부 확인
     if (email.isEmpty) {
-      onError("이메일을 입력해 주세요.");
+      onError("Please enter your email.");
       return;
     } else if (password.isEmpty) {
-      onError("비밀번호를 입력해 주세요.");
+      onError("Please enter your password.");
+      return;
+    } else if (id.isEmpty) {
+      onError("Please enter your id.");
       return;
     }
 
@@ -45,7 +49,7 @@ class AuthService extends ChangeNotifier {
     if (snapshot.exists) {
       nickname = snapshot.data()!['nickname'];
     } else {
-      await userCollection.set({'nickname': email}, SetOptions(merge: true));
+      await userCollection.set({'nickname': id}, SetOptions(merge: true));
     }
   }
 
@@ -58,10 +62,10 @@ class AuthService extends ChangeNotifier {
     // 로그인
     //이메일 및 비밀번호 입력 여부 확인
     if (email.isEmpty) {
-      onError("이메일을 입력해 주세요.");
+      onError("Please enter your email.");
       return;
     } else if (password.isEmpty) {
-      onError("비밀번호를 입력해 주세요.");
+      onError("Please enter your password.");
       return;
     }
     try {
