@@ -49,7 +49,7 @@ class _HomePageState extends State<HomePage> {
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: 120),
+              SizedBox(height: 90),
               Text(
                 "CATCH",
                 style: TextStyle(
