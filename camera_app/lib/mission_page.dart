@@ -147,7 +147,7 @@ class _MissionPageState extends State<MissionPage> {
                   height: 10,
                 ),
                 SizedBox(
-                  height: 100,
+                  height: 80,
                   child: Text(
                     widget.mission.missionDesc,
                     style: TextStyle(
@@ -176,10 +176,10 @@ class _MissionPageState extends State<MissionPage> {
                   ),
                 ),
                 // SizedBox(
-                //   height: 10,
+                //   height: 5,
                 // ),
                 SizedBox(
-                  height: 290,
+                  height: 240,
                   child: StreamBuilder(
                       stream: getImagesFromMission(),
                       builder: (context, snapshot) {
@@ -192,9 +192,12 @@ class _MissionPageState extends State<MissionPage> {
                         }
                         final images = snapshot.data;
                         return GridView.builder(
+                          padding: EdgeInsets.all(10),
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 3,
+                            mainAxisSpacing: 10,
+                            crossAxisSpacing: 10,
                           ),
                           itemCount: images!.length,
                           itemBuilder: (context, index) {
@@ -211,7 +214,8 @@ class _MissionPageState extends State<MissionPage> {
                                 },
                                 child: Image.memory(
                                   image.imageUrl,
-                                  height: 30,
+                                  width: 10,
+                                  height: 10,
                                   fit: BoxFit.cover,
                                 ));
                           },
@@ -233,11 +237,16 @@ class _MissionPageState extends State<MissionPage> {
                 )),
           )
         ]),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.white,
           onPressed: () {
             getImageFromCam(ImageSource.camera);
           },
-          child: Icon(CupertinoIcons.camera),
+          child: Image(
+            image: AssetImage('assets/icons/camera.png'),
+            height: 30,
+          ),
           tooltip: "take picture!",
         ),
       ),

@@ -96,18 +96,18 @@ class _HomePageState extends State<HomePage> {
                                       fontWeight: FontWeight.w700),
                                 ),
                                 Spacer(),
-                                IconButton(
-                                    onPressed: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  CreateMissionPage()));
-                                    },
-                                    tooltip: "add Mission!",
-                                    icon: Image(
-                                        image: AssetImage(
-                                            'assets/icons/create_mission.png')))
+                                // IconButton(
+                                //     onPressed: () {
+                                //       Navigator.push(
+                                //           context,
+                                //           MaterialPageRoute(
+                                //               builder: (context) =>
+                                //                   CreateMissionPage()));
+                                //     },
+                                //     tooltip: "add Mission!",
+                                //     icon: Image(
+                                //         image: AssetImage(
+                                //             'assets/icons/create_mission.png')))
                               ],
                             ),
                           ),
@@ -142,53 +142,62 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-          backgroundColor: Color(0xff7E70E1),
-          type: BottomNavigationBarType.fixed,
-          items: [
-            BottomNavigationBarItem(
-              icon: IconButton(
+      bottomNavigationBar: BottomAppBar(
+        color: Color(0xff7E70E1),
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 10,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(14),
+              child: IconButton(
                 onPressed: () {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => HomePage()));
                 },
                 icon: Image(image: AssetImage('assets/icons/MissionList.png')),
               ),
-              label: 'List',
             ),
-            BottomNavigationBarItem(
-              icon: IconButton(
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => HomePage()));
-                },
-                icon: Image(image: AssetImage('assets/icons/Home.png')),
-              ),
-              label: 'Home',
+            IconButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => HomePage()));
+              },
+              icon: Image(image: AssetImage('assets/icons/Home.png')),
             ),
-            BottomNavigationBarItem(
-              icon: IconButton(
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => RankingPage()));
-                },
-                icon: Image(image: AssetImage('assets/icons/Ranking.png')),
-              ),
-              label: 'Ranking',
+            const SizedBox(
+              width: 20,
             ),
-            BottomNavigationBarItem(
-              icon: IconButton(
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => MyPage()));
-                },
-                icon: Image(image: AssetImage('assets/icons/MyPage.png')),
-              ),
-              label: 'MyPage',
+            IconButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => RankingPage()));
+              },
+              icon: Image(image: AssetImage('assets/icons/Ranking.png')),
             ),
-          ]),
+            IconButton(
+              onPressed: () {
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => MyPage()));
+              },
+              icon: Image(image: AssetImage('assets/icons/MyPage.png')),
+            ),
+          ],
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.white,
+        onPressed: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => CreateMissionPage()));
+        },
+        child: Icon(
+          CupertinoIcons.add,
+          color: Color(0xff6A62BD),
+        ),
+      ),
     );
   }
 }

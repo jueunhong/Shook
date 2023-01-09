@@ -1,5 +1,6 @@
 import 'package:camera_app/auth_service.dart';
 import 'package:camera_app/fonts.dart';
+import 'package:camera_app/ranking_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
+import 'home_page.dart';
 import 'login_page.dart';
 
 class MyPage extends StatefulWidget {
@@ -141,6 +143,45 @@ class _MyPageState extends State<MyPage> {
               )),
         )
       ]),
+      bottomNavigationBar: BottomAppBar(
+        color: Color(0xff7E70E1),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(14),
+              child: IconButton(
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => HomePage()));
+                },
+                icon: Image(image: AssetImage('assets/icons/MissionList.png')),
+              ),
+            ),
+            IconButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => HomePage()));
+              },
+              icon: Image(image: AssetImage('assets/icons/Home.png')),
+            ),
+            IconButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => RankingPage()));
+              },
+              icon: Image(image: AssetImage('assets/icons/Ranking.png')),
+            ),
+            IconButton(
+              onPressed: () {
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => MyPage()));
+              },
+              icon: Image(image: AssetImage('assets/icons/MyPage.png')),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

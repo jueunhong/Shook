@@ -50,6 +50,7 @@ class AuthService extends ChangeNotifier {
       nickname = snapshot.data()!['nickname'];
     } else {
       await userCollection.set({'nickname': id}, SetOptions(merge: true));
+      await userCollection.set({'points': 0}, SetOptions(merge: true));
     }
   }
 
