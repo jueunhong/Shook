@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:camera_app/missiongallery_page.dart';
 import 'package:camera_app/ranking_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -87,7 +88,7 @@ class _HomePageState extends State<HomePage> {
                             child: Row(
                               children: [
                                 Text(
-                                  'Missions',
+                                  'All Missions',
                                   style: TextStyle(
                                       fontFamily:
                                           MyfontsFamily.pretendardSemiBold,
@@ -162,13 +163,13 @@ class _HomePageState extends State<HomePage> {
             IconButton(
               onPressed: () {
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => HomePage()));
+                    MaterialPageRoute(builder: (context) => MissionGallery()));
               },
               icon: Image(image: AssetImage('assets/icons/Home.png')),
             ),
-            const SizedBox(
-              width: 20,
-            ),
+            // const SizedBox(
+            //   width: 20,
+            // ),
             IconButton(
               onPressed: () {
                 Navigator.push(context,
@@ -186,7 +187,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.white,
         onPressed: () {

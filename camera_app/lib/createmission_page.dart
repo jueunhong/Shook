@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'fonts.dart';
+
 class CreateMissionPage extends StatefulWidget {
   const CreateMissionPage({super.key});
 
@@ -19,14 +21,8 @@ class _CreateMissionPageState extends State<CreateMissionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xff7E70E1),
       body: Stack(children: [
-        Container(
-            height: 390,
-            decoration: BoxDecoration(
-                image: DecorationImage(
-              fit: BoxFit.cover,
-              image: AssetImage('assets/images/imagepage_bg.png'),
-            ))),
         Container(
             margin: EdgeInsets.only(top: 100),
             width: double.infinity,
@@ -39,17 +35,20 @@ class _CreateMissionPageState extends State<CreateMissionPage> {
             child: Form(
               key: _formKey,
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   SizedBox(height: 16),
                   Text(
-                    'Describe picture you want🔎',
-                    style: TextStyle(fontSize: 18),
+                    'Create Mission',
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontFamily: MyfontsFamily.pretendardSemiBold,
+                        color: Colors.white),
                   ),
                   SizedBox(height: 16),
                   TextFormField(
                     controller: _titleController,
                     decoration: InputDecoration(
-                      labelText: 'Title',
                       hintText: 'Please enter a title',
                     ),
                     validator: (value) {

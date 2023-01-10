@@ -10,6 +10,7 @@ import 'package:flutter/src/widgets/framework.dart';
 
 import 'home_page.dart';
 import 'login_page.dart';
+import 'missiongallery_page.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -161,7 +162,7 @@ class _MyPageState extends State<MyPage> {
             IconButton(
               onPressed: () {
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => HomePage()));
+                    MaterialPageRoute(builder: (context) => MissionGallery()));
               },
               icon: Image(image: AssetImage('assets/icons/Home.png')),
             ),

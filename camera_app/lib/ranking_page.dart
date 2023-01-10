@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'home_page.dart';
+import 'missiongallery_page.dart';
 import 'my_page.dart';
 
 class RankingPage extends StatefulWidget {
@@ -83,8 +84,16 @@ class _RankingPageState extends State<RankingPage> {
                     final user = rankedUsers[index];
                     return Card(
                       child: ListTile(
-                        leading: Text('${user.rank}'),
+                        leading: Text(
+                          '${user.rank}',
+                          style: TextStyle(
+                              fontFamily: MyfontsFamily.pretendardSemiBold,
+                              fontSize: 28,
+                              color: Color(0xff7D67E6)),
+                        ),
+                        // leading: Text('${user.rank}', style: TextStyle(fontFamily: MyfontsFamily.pretendardSemiBold, fontSize: 28, color: Color(0xff)),),
                         title: Text(user.nickname),
+                        subtitle: Text('points: ${user.points}'),
                       ),
                     );
                   },
@@ -123,7 +132,7 @@ class _RankingPageState extends State<RankingPage> {
             IconButton(
               onPressed: () {
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => HomePage()));
+                    MaterialPageRoute(builder: (context) => MissionGallery()));
               },
               icon: Image(image: AssetImage('assets/icons/Home.png')),
             ),
