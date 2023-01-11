@@ -24,7 +24,7 @@ class _CreateMissionPageState extends State<CreateMissionPage> {
       backgroundColor: Color(0xff7E70E1),
       body: Stack(children: [
         Container(
-            margin: EdgeInsets.only(top: 100),
+            margin: EdgeInsets.only(top: 120),
             width: double.infinity,
             decoration: BoxDecoration(
                 color: Colors.white,
@@ -34,69 +34,142 @@ class _CreateMissionPageState extends State<CreateMissionPage> {
             padding: const EdgeInsets.all(16.0),
             child: Form(
               key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  SizedBox(height: 16),
-                  Text(
-                    'Create Mission',
-                    style: TextStyle(
-                        fontSize: 18,
-                        fontFamily: MyfontsFamily.pretendardSemiBold,
-                        color: Colors.white),
-                  ),
-                  SizedBox(height: 16),
-                  TextFormField(
-                    controller: _titleController,
-                    decoration: InputDecoration(
-                      hintText: 'Please enter a title',
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 30),
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 40.0),
+                        child: Text(
+                          'Create Mission',
+                          style: TextStyle(
+                              fontSize: 24,
+                              fontFamily: MyfontsFamily.pretendardSemiBold,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.white),
+                        ),
+                      ),
                     ),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Please enter a title';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 16),
-                  TextFormField(
-                    controller: _descController,
-                    decoration: InputDecoration(
-                      labelText: 'Description',
-                      hintText: 'Please enter a description',
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 40.0),
+                        child: Text(
+                          'Describe the picture you want!',
+                          style: TextStyle(
+                              fontSize: 14,
+                              fontFamily: MyfontsFamily.pretendardSemiBold,
+                              color: Colors.white),
+                        ),
+                      ),
                     ),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Please enter a description';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 16),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          _formKey.currentState!.save();
-                          FirebaseFirestore.instance
-                              .collection("missions")
-                              .add({
-                            'title': _titleController.text,
-                            'desc': _descController.text,
-                            'user': userId,
-                          });
+                    SizedBox(
+                      height: 50,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                          color: Color(0xffD9D9D9),
+                          borderRadius: BorderRadius.circular(15)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: Text(
+                          "TITLE",
+                          style: TextStyle(
+                            fontFamily: MyfontsFamily.pretendardSemiBold,
+                            color: Color(0xff5F50B1),
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 14),
+                    TextFormField(
+                      controller: _titleController,
+                      decoration: InputDecoration(
+                        hintText: 'Please enter a title',
+                      ),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter a title';
                         }
-                        Navigator.pop(context);
+                        return null;
                       },
-                      child: Text("Post"),
                     ),
-                  ),
-                ],
+                    SizedBox(
+                      height: 50,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                          color: Color(0xffD9D9D9),
+                          borderRadius: BorderRadius.circular(15)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: Text(
+                          "Description",
+                          style: TextStyle(
+                            fontFamily: MyfontsFamily.pretendardSemiBold,
+                            color: Color(0xff5F50B1),
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 14),
+                    TextFormField(
+                      controller: _descController,
+                      decoration: InputDecoration(
+                        hintText: 'Please enter a description',
+                      ),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter a description';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(
+                      height: 200,
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(70)),
+                          backgroundColor: Color(0xff7E70E1),
+                        ),
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            _formKey.currentState!.save();
+                            FirebaseFirestore.instance
+                                .collection("missions")
+                                .add({
+                              'title': _titleController.text,
+                              'desc': _descController.text,
+                              'user': userId,
+                              'isCompleted': false,
+                            });
+                          }
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          "Post",
+                          style: TextStyle(
+                              fontFamily: MyfontsFamily.pretendardSemiBold,
+                              fontSize: 32),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             )),
         Positioned(
-          top: 14,
+          top: 20,
           child: IconButton(
               onPressed: () {
                 Navigator.pop(context);

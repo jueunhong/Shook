@@ -22,6 +22,12 @@ class MissionPage extends StatefulWidget {
 class _MissionPageState extends State<MissionPage> {
   final picker = ImagePicker();
   final userId = FirebaseAuth.instance.currentUser?.uid;
+  bool isCompleted = false;
+  void changeCompleted() {
+    setState(() {
+      isCompleted = !isCompleted;
+    });
+  }
 
   File? _image;
 
@@ -188,7 +194,22 @@ class _MissionPageState extends State<MissionPage> {
                               child: Text("Error: ${snapshot.error}"));
                         }
                         if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                          return Center(child: Text("😭 No images yet"));
+                          return Center(
+                              child: Column(
+                            children: [
+                              Image(
+                                  height: 150,
+                                  image: AssetImage('assets/images/empty.png')),
+                              Text(
+                                'No images yet',
+                                style: TextStyle(
+                                    color: Color(0xff7D67E6),
+                                    fontFamily:
+                                        MyfontsFamily.pretendardSemiBold,
+                                    fontSize: 16),
+                              )
+                            ],
+                          ));
                         }
                         final images = snapshot.data;
                         return GridView.builder(
@@ -208,6 +229,8 @@ class _MissionPageState extends State<MissionPage> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => DetailImagePage(
+                                                changeCompleted:
+                                                    changeCompleted,
                                                 images: images,
                                                 index: index,
                                               )));
@@ -221,7 +244,7 @@ class _MissionPageState extends State<MissionPage> {
                           },
                         );
                       }),
-                )
+                ),
               ],
             ),
           ),
@@ -235,10 +258,12 @@ class _MissionPageState extends State<MissionPage> {
                   CupertinoIcons.arrow_left,
                   color: Colors.white,
                 )),
-          )
+          ),
         ]),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: FloatingActionButton(
+        floatingActionButton:
+            // widget.mission.isCompleted! ? null :
+            FloatingActionButton(
           backgroundColor: Colors.white,
           onPressed: () {
             getImageFromCam(ImageSource.camera);

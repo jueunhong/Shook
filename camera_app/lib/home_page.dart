@@ -27,10 +27,13 @@ class _HomePageState extends State<HomePage> {
       return snapshot.docs.map((doc) {
         final data = doc.data();
         return Mission(
-            missionId: doc.id,
-            missionTitle: data['title'],
-            missionDesc: data['desc'],
-            missionUploader: data['user']);
+          missionId: doc.id,
+          missionTitle: data['title'],
+          missionDesc: data['desc'],
+          missionUploader: data['user'],
+          selectedImageId: data['selectedImageId'],
+          isCompleted: data['isCompleted'],
+        );
       }).toList();
     });
   }
@@ -208,11 +211,15 @@ class Mission {
   final String missionTitle;
   final String missionDesc;
   final String missionUploader;
+  bool? isCompleted;
+  String? selectedImageId;
 
   Mission({
     required this.missionId,
     required this.missionTitle,
     required this.missionDesc,
     required this.missionUploader,
+    this.isCompleted,
+    this.selectedImageId,
   });
 }

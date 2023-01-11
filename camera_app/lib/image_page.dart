@@ -1,3 +1,4 @@
+import 'package:camera_app/fonts.dart';
 import 'package:camera_app/mission_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -6,10 +7,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class DetailImagePage extends StatefulWidget {
-  const DetailImagePage({Key? key, required this.images, required this.index})
+  const DetailImagePage(
+      {Key? key,
+      required this.images,
+      required this.index,
+      required this.changeCompleted})
       : super(key: key);
   final List<ImageFromMission> images;
   final int index;
+  final Function changeCompleted;
   @override
   State<DetailImagePage> createState() => _DetailImagePageState();
 }
@@ -83,34 +89,79 @@ class _DetailImagePageState extends State<DetailImagePage> {
                             width: double.infinity,
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(70)),
                                 backgroundColor: Color(0xff5F50B1),
                               ),
                               onPressed: () {
-                                givePointsAndSetMissionCompleted(SelectedImage(
-                                    missionId: widget.images[index].missionId,
-                                    missionUploaderId:
-                                        widget.images[index].missionUploaderId,
-                                    imageId: widget.images[index].imageId,
-                                    imageUploaderId:
-                                        widget.images[index].imageUploaderId));
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        content: Text(
+                                          'Will you select this picture?',
+                                          style: TextStyle(
+                                            fontFamily:
+                                                MyfontsFamily.pretendardMedium,
+                                            color: Color(0xff5F50B1),
+                                            fontSize: 18,
+                                          ),
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              givePointsAndSetMissionCompleted(
+                                                  SelectedImage(
+                                                      missionId: widget
+                                                          .images[index]
+                                                          .missionId,
+                                                      missionUploaderId: widget
+                                                          .images[index]
+                                                          .missionUploaderId,
+                                                      imageId: widget
+                                                          .images[index]
+                                                          .imageId,
+                                                      imageUploaderId: widget
+                                                          .images[index]
+                                                          .imageUploaderId));
+                                              widget.changeCompleted;
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text(
+                                              'Yes',
+                                              style: TextStyle(
+                                                fontFamily: MyfontsFamily
+                                                    .pretendardMedium,
+                                                color: Color(0xffB5A8FF),
+                                                fontSize: 18,
+                                              ),
+                                            ),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text(
+                                              'No',
+                                              style: TextStyle(
+                                                fontFamily: MyfontsFamily
+                                                    .pretendardMedium,
+                                                color: Color(0xffB5A8FF),
+                                                fontSize: 18,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    });
                               },
-                              child: Column(
-                                children: [
-                                  Text(
-                                    'CATCH!',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 24,
-                                    ),
-                                  ),
-                                  Text(
-                                    'I will select this picture',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                    ),
-                                  )
-                                ],
+                              child: Text(
+                                'CATCH!',
+                                style: TextStyle(
+                                  fontFamily: MyfontsFamily.pretendardSemiBold,
+                                  color: Colors.white,
+                                  fontSize: 32,
+                                ),
                               ),
                             ),
                           )
