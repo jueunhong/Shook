@@ -2,12 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:camera_app/fonts.dart';
 import 'package:flutter/foundation.dart';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 import 'home_page.dart';
 import 'image_page.dart';
@@ -23,6 +25,13 @@ class _MissionPageState extends State<MissionPage> {
   final picker = ImagePicker();
   final userId = FirebaseAuth.instance.currentUser?.uid;
   bool isCompleted = false;
+  final _chars =
+      'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+  Random _rnd = Random();
+
+  String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
+      length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
+
   void changeCompleted() {
     setState(() {
       isCompleted = !isCompleted;
@@ -31,28 +40,28 @@ class _MissionPageState extends State<MissionPage> {
 
   File? _image;
 
-  Future getImageFromCam(ImageSource imageSource) async {
+  Future uploadImageToFirestore(ImageSource imageSource) async {
     final image = await picker.pickImage(source: imageSource);
     setState(() {
       _image = File(image!.path);
     });
-    await uploadImageToFirestore(_image!);
-  }
 
-  Future<void> uploadImageToFirestore(File image) async {
+    Reference storageRef = FirebaseStorage.instance.ref().child(
+        'images/${widget.mission.missionId}/$userId/${getRandomString(5)}');
+
     final imagesCollection = FirebaseFirestore.instance
         .collection("missions")
         .doc(widget.mission.missionId)
         .collection("images");
-    // read the image file as a bytes array
-    List<int> imageBytes = await image.readAsBytes();
-    // encode the bytes array as a base64 string
-    String imageBase64 = base64Encode(imageBytes);
+    if (_image != null) {
+      await storageRef.putFile(_image!);
+      final userImageUrl = await storageRef.getDownloadURL();
 
-    // add a new document to the 'images' collection in Cloud Firestore
-    imagesCollection.add(
-      {'image': imageBase64, "user": userId},
-    );
+      imagesCollection.add({
+        'image': userImageUrl,
+        'user': userId,
+      });
+    }
   }
 
   Stream<List<ImageFromMission>> getImagesFromMission() {
@@ -65,10 +74,9 @@ class _MissionPageState extends State<MissionPage> {
     return imagesCollection.map((snapshot) {
       // Create a list of Map<String, dynamic> objects from the documents in the snapshot
       return snapshot.docs.map((doc) {
-        // get the base64-encoded image data as a string
-        final imageDataString = doc.data()['image'] as String;
-        // decode the string to a Uint8List
-        final imageData = base64Decode(imageDataString);
+        // get image data as a string
+        final imageData = doc.data()['image'] as String;
+
         // get the uploaderId
         final uploaderId = doc.data()['user'] as String;
         //create a map with the image data and uploaderId and docId
@@ -76,7 +84,7 @@ class _MissionPageState extends State<MissionPage> {
             missionId: widget.mission.missionId,
             missionUploaderId: widget.mission.missionUploader,
             imageId: doc.id,
-            imageUrl: ByteData.view(imageData.buffer).buffer.asUint8List(),
+            imageUrl: imageData,
             imageUploaderId: uploaderId);
       }).toList();
     });
@@ -235,7 +243,7 @@ class _MissionPageState extends State<MissionPage> {
                                                 index: index,
                                               )));
                                 },
-                                child: Image.memory(
+                                child: Image.network(
                                   image.imageUrl,
                                   width: 10,
                                   height: 10,
@@ -266,7 +274,7 @@ class _MissionPageState extends State<MissionPage> {
             FloatingActionButton(
           backgroundColor: Colors.white,
           onPressed: () {
-            getImageFromCam(ImageSource.camera);
+            uploadImageToFirestore(ImageSource.camera);
           },
           child: Image(
             image: AssetImage('assets/icons/camera.png'),
@@ -283,7 +291,7 @@ class ImageFromMission {
   final String missionId;
   final String missionUploaderId;
   final String imageId;
-  final Uint8List imageUrl;
+  final String imageUrl;
   final String imageUploaderId;
 
   ImageFromMission({

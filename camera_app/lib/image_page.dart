@@ -75,7 +75,7 @@ class _DetailImagePageState extends State<DetailImagePage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.memory(
+                    Image.network(
                       widget.images[index].imageUrl,
                       height: 380,
                       width: 260,
