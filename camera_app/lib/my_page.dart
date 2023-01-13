@@ -34,7 +34,7 @@ class _MyPageState extends State<MyPage> {
           decoration: BoxDecoration(
             image: DecorationImage(
               image: AssetImage('assets/images/mypage_bg.png'),
-              fit: BoxFit.contain,
+              fit: BoxFit.cover,
             ),
           ),
           child: Padding(

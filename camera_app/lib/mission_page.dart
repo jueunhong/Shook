@@ -1,7 +1,6 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:camera_app/fonts.dart';
-import 'package:flutter/foundation.dart';
+
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -269,9 +268,7 @@ class _MissionPageState extends State<MissionPage> {
           ),
         ]),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton:
-            // widget.mission.isCompleted! ? null :
-            FloatingActionButton(
+        floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.white,
           onPressed: () {
             uploadImageToFirestore(ImageSource.camera);
