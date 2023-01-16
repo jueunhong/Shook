@@ -52,7 +52,7 @@ class _HomePageState extends State<HomePage> {
                 margin: EdgeInsets.only(top: 70, right: 35, left: 35),
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Stack(
+                  child: Column(
                     children: [
                       Row(
                         children: [
@@ -102,10 +102,9 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ],
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 30),
-                        child: isMissionTap ? MissionList() : ChallengeTap(),
-                      ),
+                      isMissionTap
+                          ? Expanded(child: MissionList())
+                          : Expanded(child: ChallengeTap()),
                     ],
                   ),
                 ),
@@ -213,6 +212,9 @@ class _MissionListState extends State<MissionList> {
             return Text("Error: ${snapshot.error}");
           }
           if (!snapshot.hasData) {
+            return Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.data!.isEmpty) {
             return Center(
                 child: Column(
               children: [
@@ -220,7 +222,7 @@ class _MissionListState extends State<MissionList> {
                   height: 40,
                 ),
                 Image(
-                    height: 150, image: AssetImage('assets/images/empty2.png')),
+                    height: 100, image: AssetImage('assets/images/empty2.png')),
                 Text(
                   'No mission yet',
                   style: TextStyle(
@@ -232,7 +234,8 @@ class _MissionListState extends State<MissionList> {
             ));
           }
           final missions = snapshot.data;
-          return Expanded(
+          return SizedBox(
+            height: 100,
             child: ListView.separated(
                 itemCount: missions!.length,
                 separatorBuilder: (context, index) => Divider(),
@@ -295,6 +298,9 @@ class _ChallengeTapState extends State<ChallengeTap> {
             return Text("Error: ${snapshot.error}");
           }
           if (!snapshot.hasData) {
+            return Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.data!.isEmpty) {
             return Center(
                 child: Column(
               children: [
@@ -302,7 +308,7 @@ class _ChallengeTapState extends State<ChallengeTap> {
                   height: 40,
                 ),
                 Image(
-                    height: 150, image: AssetImage('assets/images/empty2.png')),
+                    height: 100, image: AssetImage('assets/images/empty2.png')),
                 Text(
                   'No challenge yet',
                   style: TextStyle(
@@ -314,7 +320,8 @@ class _ChallengeTapState extends State<ChallengeTap> {
             ));
           }
           final challenges = snapshot.data;
-          return Expanded(
+          return SizedBox(
+            height: 100,
             child: ListView.separated(
                 itemCount: challenges!.length,
                 separatorBuilder: (context, index) => Divider(),

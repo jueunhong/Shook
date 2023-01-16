@@ -40,6 +40,19 @@ class _ChallengePageState extends State<ChallengePage> {
     Reference storageRef = FirebaseStorage.instance.ref().child(
         'images/${widget.challenge.challengeId}/$userId/${getRandomString(5)}');
 
+    final userDoc =
+        await FirebaseFirestore.instance.collection('users').doc(userId).get();
+    if (userDoc.exists && userDoc.data()!.containsKey('nickname')) {
+      final userNickname = userDoc.data()!['nickname'] as String;
+
+      final challengersCollection = FirebaseFirestore.instance
+          .collection("challenges")
+          .doc(widget.challenge.challengeId)
+          .collection("challengers")
+          .doc(userId)
+          .set({'nickname': userNickname});
+    }
+
     final imagesCollection = FirebaseFirestore.instance
         .collection("challenges")
         .doc(widget.challenge.challengeId)
@@ -163,9 +176,10 @@ class _ChallengePageState extends State<ChallengePage> {
                             stream: FirebaseFirestore.instance
                                 .collection("challenges")
                                 .doc(widget.challenge.challengeId)
-                                .collection('challengers')
+                                .collection("challengers")
                                 .snapshots(),
-                            builder: ((context, snapshot) {
+                            builder: ((context,
+                                AsyncSnapshot<QuerySnapshot> snapshot) {
                               if (snapshot.hasError) {
                                 return Text("Error: ${snapshot.error}");
                               }
@@ -173,17 +187,38 @@ class _ChallengePageState extends State<ChallengePage> {
                                 return Center(
                                     child: CircularProgressIndicator());
                               }
+                              if (snapshot.data!.docs.isEmpty) {
+                                return Center(
+                                    child: Column(
+                                  children: [
+                                    Image(
+                                        height: 100,
+                                        image: AssetImage(
+                                            'assets/images/empty.png')),
+                                    Text(
+                                      'No images yet',
+                                      style: TextStyle(
+                                          color: Color(0xff7D67E6),
+                                          fontFamily:
+                                              MyfontsFamily.pretendardSemiBold,
+                                          fontSize: 16),
+                                    )
+                                  ],
+                                ));
+                              }
+
                               final challengers = snapshot.data!.docs;
                               return ListView.builder(
                                   itemCount: challengers.length,
                                   itemBuilder: ((context, index) {
                                     final userId = challengers[index].id;
-                                    final imagesStream = challengers[index]
-                                        .reference
-                                        .collection(userId)
-                                        .snapshots();
+                                    final imagesStream = challengers[index];
+                                    final userNickname =
+                                        imagesStream.get('nickname');
                                     return StreamBuilder<QuerySnapshot>(
-                                        stream: imagesStream,
+                                        stream: imagesStream.reference
+                                            .collection(userId)
+                                            .snapshots(),
                                         builder: ((context, snapshot) {
                                           if (snapshot.hasError) {
                                             return Text(
@@ -194,19 +229,28 @@ class _ChallengePageState extends State<ChallengePage> {
                                                 child:
                                                     CircularProgressIndicator());
                                           }
+
                                           final images = snapshot.data!.docs;
-                                          return Container(
-                                            width: double.infinity,
-                                            height: 40,
-                                            child: Row(
+
+                                          return SizedBox(
+                                            height: 100,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
-                                                ...images
-                                                    .map((e) => Image.network(
-                                                          e.get('image'),
-                                                          width: 30,
-                                                          height: 30,
-                                                          fit: BoxFit.cover,
-                                                        ))
+                                                Text(userNickname),
+                                                Row(
+                                                  children: [
+                                                    ...images.map(
+                                                        (e) => Image.network(
+                                                              e.get('image')
+                                                                  as String,
+                                                              width: 80,
+                                                              height: 80,
+                                                              fit: BoxFit.cover,
+                                                            ))
+                                                  ],
+                                                ),
                                               ],
                                             ),
                                           );

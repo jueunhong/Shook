@@ -200,12 +200,16 @@ class _MissionPageState extends State<MissionPage> {
                           return Center(
                               child: Text("Error: ${snapshot.error}"));
                         }
-                        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        if (!snapshot.hasData) {
+                          return Center(child: CircularProgressIndicator());
+                        }
+
+                        if (snapshot.data!.isEmpty) {
                           return Center(
                               child: Column(
                             children: [
                               Image(
-                                  height: 150,
+                                  height: 100,
                                   image: AssetImage('assets/images/empty.png')),
                               Text(
                                 'No images yet',
