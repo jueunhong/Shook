@@ -66,7 +66,7 @@ class _ChallengePageState extends State<ChallengePage> {
       imagesCollection.add({
         'image': userImageUrl,
         'user': userId,
-        'date': DateTime.now(),
+        'date': DateTime.now().millisecondsSinceEpoch,
       });
     }
   }
@@ -94,21 +94,64 @@ class _ChallengePageState extends State<ChallengePage> {
                       SizedBox(
                         height: 90,
                       ),
-                      Container(
-                        decoration: BoxDecoration(
-                            color: Color(0xffD9D9D9),
-                            borderRadius: BorderRadius.circular(15)),
-                        child: Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: Text(
-                            "Challenge",
-                            style: TextStyle(
-                              fontFamily: MyfontsFamily.pretendardSemiBold,
-                              color: Color(0xff5F50B1),
-                              fontWeight: FontWeight.w700,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                                color: Color(0xffD9D9D9),
+                                borderRadius: BorderRadius.circular(15)),
+                            child: Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Text(
+                                "Challenge",
+                                style: TextStyle(
+                                  fontFamily: MyfontsFamily.pretendardSemiBold,
+                                  color: Color(0xff5F50B1),
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                                color: Color(0xffA395EE),
+                                borderRadius: BorderRadius.circular(15)),
+                            child: Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Text(
+                                widget.challenge.challengeDuration,
+                                style: TextStyle(
+                                  fontFamily: MyfontsFamily.pretendardSemiBold,
+                                  fontSize: 12,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                                color: Color(0xffA395EE),
+                                borderRadius: BorderRadius.circular(15)),
+                            child: Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Text(
+                                '${widget.challenge.challengeGoals} 장',
+                                style: TextStyle(
+                                  fontFamily: MyfontsFamily.pretendardSemiBold,
+                                  fontSize: 12,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       SizedBox(
                         height: 10,
@@ -212,6 +255,7 @@ class _ChallengePageState extends State<ChallengePage> {
                                   itemCount: challengers.length,
                                   itemBuilder: ((context, index) {
                                     final userId = challengers[index].id;
+                                    int challengersIndex = index;
                                     final imagesStream = challengers[index];
                                     final userNickname =
                                         imagesStream.get('nickname');
@@ -232,25 +276,62 @@ class _ChallengePageState extends State<ChallengePage> {
 
                                           final images = snapshot.data!.docs;
 
-                                          return SizedBox(
-                                            height: 100,
+                                          return SingleChildScrollView(
                                             child: Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 Text(userNickname),
-                                                Row(
-                                                  children: [
-                                                    ...images.map(
-                                                        (e) => Image.network(
-                                                              e.get('image')
-                                                                  as String,
-                                                              width: 80,
-                                                              height: 80,
-                                                              fit: BoxFit.cover,
-                                                            ))
-                                                  ],
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                      color: Color(0xffE2E2E2),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              15)),
+                                                  child: Wrap(
+                                                      runSpacing: 5,
+                                                      children: List.generate(
+                                                        images.length,
+                                                        (index) => Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8.0),
+                                                          child: ClipRRect(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        15),
+                                                            child:
+                                                                GestureDetector(
+                                                              onTap: () {
+                                                                Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder: (context) =>
+                                                                            DetailChallengePage(
+                                                                              challengers: challengers,
+                                                                              challengersIndex: challengersIndex,
+                                                                              imageIndex: index,
+                                                                            )));
+                                                              },
+                                                              child:
+                                                                  Image.network(
+                                                                images[index].get(
+                                                                        'image')
+                                                                    as String,
+                                                                width: 100,
+                                                                height: 92,
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      )),
                                                 ),
+                                                SizedBox(
+                                                  height: 10,
+                                                )
                                               ],
                                             ),
                                           );
@@ -287,5 +368,113 @@ class _ChallengePageState extends State<ChallengePage> {
             tooltip: "take picture!",
           ),
         ));
+  }
+}
+
+class DetailChallengePage extends StatefulWidget {
+  const DetailChallengePage(
+      {Key? key,
+      required this.challengers,
+      required this.challengersIndex,
+      required this.imageIndex})
+      : super(key: key);
+  final List challengers;
+  final int challengersIndex;
+  final int imageIndex;
+  @override
+  State<DetailChallengePage> createState() => _DetailChallengePageState();
+}
+
+class _DetailChallengePageState extends State<DetailChallengePage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: PageView.builder(
+      controller: PageController(initialPage: widget.challengersIndex),
+      itemCount: widget.challengers.length,
+      itemBuilder: ((context, index) {
+        final userId = widget.challengers[index].id;
+        final imagesStream = widget.challengers[index];
+        final userNickname = imagesStream.get('nickname');
+        return Stack(children: [
+          Container(
+              height: 390,
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                fit: BoxFit.cover,
+                image: AssetImage('assets/images/imagepage_bg.png'),
+              ))),
+          Align(
+            alignment: Alignment.center,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('$userNickname님의 참여 사진입니다!'),
+                StreamBuilder<QuerySnapshot>(
+                    stream:
+                        imagesStream.reference.collection(userId).snapshots(),
+                    builder: ((context, snapshot) {
+                      if (snapshot.hasError) {
+                        return Text("Error: ${snapshot.error}");
+                      }
+                      if (!snapshot.hasData) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+
+                      final images = snapshot.data!.docs;
+
+                      return SizedBox(
+                        width: 300,
+                        height: 400,
+                        child: ListView.builder(
+                            controller:
+                                PageController(initialPage: widget.imageIndex),
+                            itemCount: images.length,
+                            itemBuilder: ((context, index) {
+                              final image = images[index];
+                              final tsdate = image['date'];
+                              return Card(
+                                child: Column(
+                                  children: [
+                                    Text(
+                                        DateTime.fromMillisecondsSinceEpoch(
+                                                    tsdate)
+                                                .year
+                                                .toString() +
+                                            '/' +
+                                            DateTime
+                                                    .fromMillisecondsSinceEpoch(
+                                                        tsdate)
+                                                .month
+                                                .toString() +
+                                            '/' +
+                                            DateTime.fromMillisecondsSinceEpoch(
+                                                    tsdate)
+                                                .day
+                                                .toString()),
+                                    Image.network(image['image'])
+                                  ],
+                                ),
+                              );
+                            })),
+                      );
+                    })),
+              ],
+            ),
+          ),
+          Positioned(
+            top: 14,
+            child: IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: Icon(
+                  CupertinoIcons.arrow_left,
+                  color: Colors.white,
+                )),
+          )
+        ]);
+      }),
+    ));
   }
 }

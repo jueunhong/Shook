@@ -282,12 +282,17 @@ class _ChallengeTapState extends State<ChallengeTap> {
           challengeTitle: data['title'],
           challengeDesc: data['desc'],
           challengeUploader: data['user'],
+          challengeDuration: data['duration'],
           challengeGoals: data['goals'],
           isCompleted: data['isCompleted'],
         );
       }).toList();
     });
   }
+
+  final durationType = ["매일", "일주일", "한 달"];
+  String selectedDuration = '매일';
+  List<Challenge> selectedChallenges = [];
 
   @override
   Widget build(BuildContext context) {
@@ -320,28 +325,106 @@ class _ChallengeTapState extends State<ChallengeTap> {
             ));
           }
           final challenges = snapshot.data;
-          return SizedBox(
-            height: 100,
-            child: ListView.separated(
-                itemCount: challenges!.length,
-                separatorBuilder: (context, index) => Divider(),
-                itemBuilder: (context, index) {
-                  final challenge = challenges[index];
-                  return ListTile(
-                    title: Text(challenge.challengeTitle,
-                        style: TextStyle(
-                          fontFamily: MyfontsFamily.pretendardMedium,
-                        )),
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ChallengePage(
-                                    challenge: challenge,
-                                  )));
+          selectedChallenges = challenges!
+              .where((challenge) =>
+                  challenge.challengeDuration == selectedDuration)
+              .toList();
+
+          return Column(
+            children: [
+              Align(
+                alignment: Alignment.topRight,
+                child: SizedBox(
+                  height: 35,
+                  child: DropdownButton(
+                    value: selectedDuration,
+                    items: durationType
+                        .map((e) => DropdownMenuItem(
+                              child: Text(
+                                e,
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    fontFamily: MyfontsFamily.pretendardMedium),
+                              ),
+                              value: e,
+                            ))
+                        .toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        selectedDuration = value!;
+                      });
                     },
-                  );
-                }),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: ListView.separated(
+                    itemCount: selectedChallenges.length,
+                    separatorBuilder: (context, index) => Divider(),
+                    itemBuilder: (context, index) {
+                      final challenge = selectedChallenges[index];
+                      return ListTile(
+                        title: Text(challenge.challengeTitle,
+                            style: TextStyle(
+                              fontFamily: MyfontsFamily.pretendardMedium,
+                            )),
+                        trailing: SizedBox(
+                          width: 100,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                    color: Color(0xffA395EE),
+                                    borderRadius: BorderRadius.circular(15)),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: Text(
+                                    '${challenge.challengeDuration}',
+                                    style: TextStyle(
+                                      fontFamily:
+                                          MyfontsFamily.pretendardSemiBold,
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Container(
+                                decoration: BoxDecoration(
+                                    color: Color(0xffA395EE),
+                                    borderRadius: BorderRadius.circular(15)),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: Text(
+                                    '${challenge.challengeGoals} 장',
+                                    style: TextStyle(
+                                      fontFamily:
+                                          MyfontsFamily.pretendardSemiBold,
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ChallengePage(
+                                        challenge: challenge,
+                                      )));
+                        },
+                      );
+                    }),
+              ),
+            ],
           );
         });
   }
@@ -371,6 +454,7 @@ class Challenge {
   final String challengeDesc;
   final String challengeUploader;
   final int challengeGoals;
+  final String challengeDuration;
   bool? isCompleted;
 
   Challenge({
@@ -379,6 +463,7 @@ class Challenge {
     required this.challengeDesc,
     required this.challengeUploader,
     required this.challengeGoals,
+    required this.challengeDuration,
     this.isCompleted,
   });
 }

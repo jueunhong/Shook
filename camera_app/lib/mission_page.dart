@@ -47,7 +47,8 @@ class _MissionPageState extends State<MissionPage> {
 
     Reference storageRef = FirebaseStorage.instance.ref().child(
         'images/${widget.mission.missionId}/$userId/${getRandomString(5)}');
-
+    final imageUploaderDoc =
+        FirebaseFirestore.instance.collection('users').doc(userId);
     final imagesCollection = FirebaseFirestore.instance
         .collection("missions")
         .doc(widget.mission.missionId)
@@ -61,6 +62,8 @@ class _MissionPageState extends State<MissionPage> {
         'user': userId,
       });
     }
+    await imageUploaderDoc
+        .set({'points': FieldValue.increment(5)}, SetOptions(merge: true));
   }
 
   Stream<List<ImageFromMission>> getImagesFromMission() {

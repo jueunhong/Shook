@@ -197,6 +197,7 @@ class _CreateChallengePageState extends State<CreateChallengePage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descController = TextEditingController();
   int? goalNum;
+  String? duration;
 
   final userId = FirebaseAuth.instance.currentUser?.uid;
   @override
@@ -205,7 +206,7 @@ class _CreateChallengePageState extends State<CreateChallengePage> {
       backgroundColor: Color(0xff7E70E1),
       body: Stack(children: [
         Container(
-            margin: EdgeInsets.only(top: 120),
+            margin: EdgeInsets.only(top: 100),
             width: double.infinity,
             decoration: BoxDecoration(
                 color: Colors.white,
@@ -248,7 +249,7 @@ class _CreateChallengePageState extends State<CreateChallengePage> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     SizedBox(
-                      height: 120,
+                      height: 100,
                     ),
                     Form(
                         key: _formKey,
@@ -273,7 +274,7 @@ class _CreateChallengePageState extends State<CreateChallengePage> {
                                 ),
                               ),
                             ),
-                            SizedBox(height: 14),
+                            SizedBox(height: 10),
                             TextFormField(
                               controller: _titleController,
                               decoration: InputDecoration(
@@ -287,7 +288,7 @@ class _CreateChallengePageState extends State<CreateChallengePage> {
                               },
                             ),
                             SizedBox(
-                              height: 50,
+                              height: 30,
                             ),
                             Container(
                               decoration: BoxDecoration(
@@ -306,7 +307,7 @@ class _CreateChallengePageState extends State<CreateChallengePage> {
                                 ),
                               ),
                             ),
-                            SizedBox(height: 14),
+                            SizedBox(height: 10),
                             TextFormField(
                               controller: _descController,
                               decoration: InputDecoration(
@@ -320,6 +321,34 @@ class _CreateChallengePageState extends State<CreateChallengePage> {
                               },
                             ),
                             SizedBox(height: 30),
+                            Container(
+                              decoration: BoxDecoration(
+                                  color: Color(0xffD9D9D9),
+                                  borderRadius: BorderRadius.circular(15)),
+                              child: Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: Text(
+                                  "Duration",
+                                  style: TextStyle(
+                                    fontFamily:
+                                        MyfontsFamily.pretendardSemiBold,
+                                    color: Color(0xff5F50B1),
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            DurationFormField(
+                                onSaved: (duration) => this.duration = duration,
+                                initialValue: null,
+                                validator: (value) {
+                                  if (value == null) {
+                                    return 'Please select the Duration';
+                                  }
+
+                                  return null;
+                                }),
+                            SizedBox(height: 10),
                             Container(
                               decoration: BoxDecoration(
                                   color: Color(0xffD9D9D9),
@@ -348,7 +377,7 @@ class _CreateChallengePageState extends State<CreateChallengePage> {
                                   return null;
                                 }),
                             SizedBox(
-                              height: 60,
+                              height: 5,
                             ),
                             SizedBox(
                               width: double.infinity,
@@ -368,6 +397,7 @@ class _CreateChallengePageState extends State<CreateChallengePage> {
                                       'title': _titleController.text,
                                       'desc': _descController.text,
                                       'goals': goalNum,
+                                      'duration': duration,
                                       'user': userId,
                                       'isCompleted': false,
                                     });
@@ -488,6 +518,111 @@ class CustomFormField extends FormField {
                               '5 pics',
                               style: TextStyle(
                                   color: state.value == 5
+                                      ? Color(0xff5F50B1)
+                                      : Color(0xffD9D9D9)),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  (state.hasError)
+                      ? Text(
+                          state.errorText!,
+                          style:
+                              TextStyle(color: Color(0xffD32F2F), fontSize: 12),
+                        )
+                      : Container()
+                ],
+              );
+            });
+}
+
+class DurationFormField extends FormField {
+  DurationFormField({
+    FormFieldSetter? onSaved,
+    FormFieldValidator? validator,
+    String? initialValue,
+  }) : super(
+            validator: validator,
+            onSaved: onSaved,
+            initialValue: initialValue,
+            builder: (FormFieldState state) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TextButton(
+                          style: TextButton.styleFrom(
+                            side: BorderSide(
+                                width: 1.5,
+                                color: state.value == "매일"
+                                    ? Color(0xff5F50B1)
+                                    : Color(0xffD9D9D9)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8)),
+                          ),
+                          onPressed: () {
+                            state.didChange("매일");
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 14),
+                            child: Text(
+                              '매일',
+                              style: TextStyle(
+                                  color: state.value == "매일"
+                                      ? Color(0xff5F50B1)
+                                      : Color(0xffD9D9D9)),
+                            ),
+                          ),
+                        ),
+                        TextButton(
+                          style: TextButton.styleFrom(
+                            side: BorderSide(
+                                width: 1.5,
+                                color: state.value == "일주일"
+                                    ? Color(0xff5F50B1)
+                                    : Color(0xffD9D9D9)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8)),
+                          ),
+                          onPressed: () {
+                            state.didChange("일주일");
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 14),
+                            child: Text(
+                              '일주일간',
+                              style: TextStyle(
+                                  color: state.value == '일주일'
+                                      ? Color(0xff5F50B1)
+                                      : Color(0xffD9D9D9)),
+                            ),
+                          ),
+                        ),
+                        TextButton(
+                          style: TextButton.styleFrom(
+                            side: BorderSide(
+                                width: 1.5,
+                                color: state.value == "한 달"
+                                    ? Color(0xff5F50B1)
+                                    : Color(0xffD9D9D9)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8)),
+                          ),
+                          onPressed: () {
+                            state.didChange("한 달");
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 14),
+                            child: Text(
+                              '한 달간',
+                              style: TextStyle(
+                                  color: state.value == "한 달"
                                       ? Color(0xff5F50B1)
                                       : Color(0xffD9D9D9)),
                             ),

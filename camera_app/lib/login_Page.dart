@@ -268,7 +268,6 @@ class _SignUpState extends State<SignUp> {
                       ),
                       child: TextField(
                         controller: idController,
-                        obscureText: true,
                         decoration: InputDecoration(border: InputBorder.none),
                       ),
                     ),
