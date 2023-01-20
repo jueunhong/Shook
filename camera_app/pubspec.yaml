@@ -43,6 +43,7 @@ dependencies:
   cloud_firestore: ^4.3.0
   provider: ^6.0.5
   firebase_storage: ^11.0.10
+  table_calendar: ^3.0.8
 
 dev_dependencies:
   flutter_test:

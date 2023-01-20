@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'fonts.dart';
 import 'home_page.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class ChallengePage extends StatefulWidget {
   const ChallengePage({Key? key, required this.challenge}) : super(key: key);
@@ -186,7 +187,7 @@ class _ChallengePageState extends State<ChallengePage> {
                         height: 10,
                       ),
                       SizedBox(
-                        height: 80,
+                        height: 70,
                         child: Text(
                           widget.challenge.challengeDesc,
                           style: TextStyle(
@@ -197,7 +198,7 @@ class _ChallengePageState extends State<ChallengePage> {
                         ),
                       ),
                       SizedBox(
-                        height: 30,
+                        height: 15,
                       ),
                       Container(
                         decoration: BoxDecoration(
@@ -276,64 +277,8 @@ class _ChallengePageState extends State<ChallengePage> {
 
                                           final images = snapshot.data!.docs;
 
-                                          return SingleChildScrollView(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(userNickname),
-                                                Container(
-                                                  decoration: BoxDecoration(
-                                                      color: Color(0xffE2E2E2),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              15)),
-                                                  child: Wrap(
-                                                      runSpacing: 5,
-                                                      children: List.generate(
-                                                        images.length,
-                                                        (index) => Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8.0),
-                                                          child: ClipRRect(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        15),
-                                                            child:
-                                                                GestureDetector(
-                                                              onTap: () {
-                                                                Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) =>
-                                                                            DetailChallengePage(
-                                                                              challengers: challengers,
-                                                                              challengersIndex: challengersIndex,
-                                                                              imageIndex: index,
-                                                                            )));
-                                                              },
-                                                              child:
-                                                                  Image.network(
-                                                                images[index].get(
-                                                                        'image')
-                                                                    as String,
-                                                                width: 100,
-                                                                height: 92,
-                                                                fit: BoxFit
-                                                                    .cover,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      )),
-                                                ),
-                                                SizedBox(
-                                                  height: 10,
-                                                )
-                                              ],
-                                            ),
+                                          return ChallengeCalendar(
+                                            images: images,
                                           );
                                         }));
                                   }));
@@ -369,6 +314,81 @@ class _ChallengePageState extends State<ChallengePage> {
           ),
         ));
   }
+}
+
+class ChallengeCalendar extends StatefulWidget {
+  const ChallengeCalendar({
+    Key? key,
+    required this.images,
+  }) : super(key: key);
+  final List<QueryDocumentSnapshot> images;
+  @override
+  State<ChallengeCalendar> createState() => _ChallengeCalendarState();
+}
+
+class _ChallengeCalendarState extends State<ChallengeCalendar> {
+  final _eventsList = {};
+
+  List _getEventsForDay(
+    DateTime day,
+  ) {
+    widget.images.forEach((image) {
+      final date = DateTime.fromMillisecondsSinceEpoch(image.get('date'));
+      _eventsList[date] ??= [];
+      _eventsList[date]!.add(image);
+    });
+
+    return _eventsList.entries
+        .where((e) => isSameDay(e.key, day))
+        .map((e) => e.value)
+        .expand((i) => i)
+        .toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: TableCalendar(
+        // calendarBuilders: CalendarBuilders(
+        //   markerBuilder: (context, day, events) {
+        //     final children = <Widget>[];
+        //     if (_eventsList[day] != null) {
+        //       return children.add(Container(
+        //         decoration:
+        //             BoxDecoration(color: Colors.green, shape: BoxShape.circle),
+        //       ));
+        //     }
+        //   },
+        // ),
+        eventLoader: _getEventsForDay,
+        calendarBuilders: CalendarBuilders(
+          markerBuilder: (context, date, events) {
+            DateTime _date = DateTime(date.year, date.month, date.day);
+            if (events.isNotEmpty) {
+              return Container(
+                width: 10,
+                height: 10,
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle, color: Colors.purple[300]),
+              );
+            } else {}
+          },
+        ),
+
+        headerStyle:
+            HeaderStyle(formatButtonVisible: false, titleCentered: true),
+        calendarFormat: CalendarFormat.month,
+        focusedDay: DateTime.now(),
+        firstDay: DateTime(2010, 10, 16),
+        lastDay: DateTime(2030, 3, 14),
+      ),
+    );
+  }
+}
+
+class Event {
+  final QueryDocumentSnapshot<Object?> image;
+  Event(this.image);
 }
 
 class DetailChallengePage extends StatefulWidget {
@@ -442,16 +462,27 @@ class _DetailChallengePageState extends State<DetailChallengePage> {
                                                 .year
                                                 .toString() +
                                             '/' +
-                                            DateTime
-                                                    .fromMillisecondsSinceEpoch(
-                                                        tsdate)
+                                            DateTime.fromMillisecondsSinceEpoch(
+                                                    tsdate)
                                                 .month
                                                 .toString() +
                                             '/' +
                                             DateTime.fromMillisecondsSinceEpoch(
                                                     tsdate)
                                                 .day
-                                                .toString()),
+                                                .toString() +
+                                            ' ' +
+                                            DateTime.fromMillisecondsSinceEpoch(
+                                                    tsdate)
+                                                .hour
+                                                .toString() +
+                                            '시' +
+                                            ' ' +
+                                            DateTime.fromMillisecondsSinceEpoch(
+                                                    tsdate)
+                                                .minute
+                                                .toString() +
+                                            '분'),
                                     Image.network(image['image'])
                                   ],
                                 ),
