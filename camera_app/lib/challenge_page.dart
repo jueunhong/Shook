@@ -334,14 +334,13 @@ class _ChallengeCalendarState extends State<ChallengeCalendar> {
   ) {
     widget.images.forEach((image) {
       final date = DateTime.fromMillisecondsSinceEpoch(image.get('date'));
-      _eventsList[date] ??= [];
-      _eventsList[date]!.add(image);
+      _eventsList[date] ??= 0;
+      _eventsList[date]++;
     });
 
     return _eventsList.entries
         .where((e) => isSameDay(e.key, day))
         .map((e) => e.value)
-        .expand((i) => i)
         .toList();
   }
 
@@ -349,32 +348,22 @@ class _ChallengeCalendarState extends State<ChallengeCalendar> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: TableCalendar(
-        // calendarBuilders: CalendarBuilders(
-        //   markerBuilder: (context, day, events) {
-        //     final children = <Widget>[];
-        //     if (_eventsList[day] != null) {
-        //       return children.add(Container(
-        //         decoration:
-        //             BoxDecoration(color: Colors.green, shape: BoxShape.circle),
-        //       ));
-        //     }
-        //   },
-        // ),
         eventLoader: _getEventsForDay,
         calendarBuilders: CalendarBuilders(
           markerBuilder: (context, date, events) {
-            DateTime _date = DateTime(date.year, date.month, date.day);
-            if (events.isNotEmpty) {
-              return Container(
-                width: 10,
-                height: 10,
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle, color: Colors.purple[300]),
-              );
-            } else {}
+            return Wrap(
+              children: List.generate(events.length, (index) {
+                return Container(
+                    width: 10,
+                    height: 10,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.purple[300],
+                    ));
+              }),
+            );
           },
         ),
-
         headerStyle:
             HeaderStyle(formatButtonVisible: false, titleCentered: true),
         calendarFormat: CalendarFormat.month,
