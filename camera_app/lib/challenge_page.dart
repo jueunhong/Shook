@@ -20,7 +20,16 @@ class ChallengePage extends StatefulWidget {
   State<ChallengePage> createState() => _ChallengePageState();
 }
 
-class _ChallengePageState extends State<ChallengePage> {
+class _ChallengePageState extends State<ChallengePage>
+    with TickerProviderStateMixin {
+  TabController? _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
   final picker = ImagePicker();
   final userId = FirebaseAuth.instance.currentUser?.uid;
   File? _image;
@@ -81,7 +90,7 @@ class _ChallengePageState extends State<ChallengePage> {
           body: Stack(
             children: [
               Container(
-                  margin: EdgeInsets.only(top: 60),
+                  margin: EdgeInsets.only(top: 55),
                   width: double.infinity,
                   decoration: BoxDecoration(
                       color: Colors.white,
@@ -93,7 +102,7 @@ class _ChallengePageState extends State<ChallengePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(
-                        height: 90,
+                        height: 70,
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -215,6 +224,23 @@ class _ChallengePageState extends State<ChallengePage> {
                           ),
                         ),
                       ),
+                      Container(
+                        height: 20,
+                        child: TabBar(
+                          indicatorColor: Color(0xff5F50B1),
+                          controller: _tabController,
+                          labelColor: Color(0xff5F50B1),
+                          unselectedLabelColor: Color(0xffD9D9D9),
+                          tabs: [
+                            Tab(
+                              text: "내 참여",
+                            ),
+                            Tab(
+                              text: "다른 참가자",
+                            )
+                          ],
+                        ),
+                      ),
                       Expanded(
                         child: StreamBuilder<QuerySnapshot>(
                             stream: FirebaseFirestore.instance
@@ -252,36 +278,87 @@ class _ChallengePageState extends State<ChallengePage> {
                               }
 
                               final challengers = snapshot.data!.docs;
-                              return ListView.builder(
-                                  itemCount: challengers.length,
-                                  itemBuilder: ((context, index) {
-                                    final userId = challengers[index].id;
-                                    int challengersIndex = index;
-                                    final imagesStream = challengers[index];
-                                    final userNickname =
-                                        imagesStream.get('nickname');
-                                    return StreamBuilder<QuerySnapshot>(
-                                        stream: imagesStream.reference
-                                            .collection(userId)
-                                            .snapshots(),
-                                        builder: ((context, snapshot) {
-                                          if (snapshot.hasError) {
-                                            return Text(
-                                                "Error: ${snapshot.error}");
-                                          }
-                                          if (!snapshot.hasData) {
-                                            return Center(
-                                                child:
-                                                    CircularProgressIndicator());
-                                          }
+                              return TabBarView(
+                                  controller: _tabController,
+                                  children: [
+                                    ListView.builder(
+                                        itemCount: challengers.length,
+                                        itemBuilder: ((context, index) {
+                                          final docId = challengers[index].id;
+                                          if (docId == userId) {
+                                            final currentUserImages =
+                                                challengers[index];
+                                            return StreamBuilder<QuerySnapshot>(
+                                                stream: currentUserImages
+                                                    .reference
+                                                    .collection(docId)
+                                                    .snapshots(),
+                                                builder: ((context, snapshot) {
+                                                  if (snapshot.hasError) {
+                                                    return Text(
+                                                        "Error: ${snapshot.error}");
+                                                  }
+                                                  if (!snapshot.hasData) {
+                                                    return Center(
+                                                        child:
+                                                            CircularProgressIndicator());
+                                                  }
 
-                                          final images = snapshot.data!.docs;
+                                                  final images =
+                                                      snapshot.data!.docs;
 
-                                          return ChallengeCalendar(
-                                            images: images,
-                                          );
-                                        }));
-                                  }));
+                                                  return ChallengeCalendar(
+                                                    images: images,
+                                                  );
+                                                }));
+                                          } else
+                                            return Container();
+                                        })),
+                                    PageView.builder(
+                                        itemCount: challengers.length,
+                                        itemBuilder: ((context, index) {
+                                          final docId = challengers[index].id;
+                                          final nickname = challengers[index]
+                                              .get('nickname');
+                                          if (docId != userId) {
+                                            final currentUserImages =
+                                                challengers[index];
+                                            return StreamBuilder<QuerySnapshot>(
+                                                stream: currentUserImages
+                                                    .reference
+                                                    .collection(docId)
+                                                    .snapshots(),
+                                                builder: ((context, snapshot) {
+                                                  if (snapshot.hasError) {
+                                                    return Text(
+                                                        "Error: ${snapshot.error}");
+                                                  }
+                                                  if (!snapshot.hasData) {
+                                                    return Center(
+                                                        child:
+                                                            CircularProgressIndicator());
+                                                  }
+
+                                                  final images =
+                                                      snapshot.data!.docs;
+
+                                                  return Column(
+                                                    children: [
+                                                      Text(nickname),
+                                                      Container(
+                                                        height: 330,
+                                                        child:
+                                                            ChallengeCalendar(
+                                                          images: images,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  );
+                                                }));
+                                          } else
+                                            return Container();
+                                        })),
+                                  ]);
                             })),
                       ),
                     ]),
@@ -373,11 +450,6 @@ class _ChallengeCalendarState extends State<ChallengeCalendar> {
       ),
     );
   }
-}
-
-class Event {
-  final QueryDocumentSnapshot<Object?> image;
-  Event(this.image);
 }
 
 class DetailChallengePage extends StatefulWidget {
