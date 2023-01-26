@@ -23,6 +23,7 @@ class ChallengePage extends StatefulWidget {
 class _ChallengePageState extends State<ChallengePage>
     with TickerProviderStateMixin {
   TabController? _tabController;
+  PageController _pageController = PageController();
 
   @override
   void initState() {
@@ -257,96 +258,94 @@ class _ChallengePageState extends State<ChallengePage>
                                 return Center(
                                     child: CircularProgressIndicator());
                               }
-                              if (snapshot.data!.docs.isEmpty) {
-                                return Center(
-                                    child: Column(
-                                  children: [
-                                    SizedBox(
-                                      height: 50,
-                                    ),
-                                    Image(
-                                        height: 100,
-                                        image: AssetImage(
-                                            'assets/images/empty.png')),
-                                    Text(
-                                      'No images yet',
-                                      style: TextStyle(
-                                          color: Color(0xff7D67E6),
-                                          fontFamily:
-                                              MyfontsFamily.pretendardSemiBold,
-                                          fontSize: 16),
-                                    )
-                                  ],
-                                ));
-                              }
 
                               final challengers = snapshot.data!.docs;
+                              final otherChallengers = challengers
+                                  .where((c) => c.id != userId)
+                                  .toList();
                               return TabBarView(
                                   controller: _tabController,
                                   children: [
-                                    ListView.builder(
-                                        itemCount: challengers.length,
-                                        itemBuilder: ((context, index) {
-                                          final docId = challengers[index].id;
-                                          if (docId == userId) {
-                                            final currentUserImages =
-                                                challengers[index];
-                                            return StreamBuilder<QuerySnapshot>(
-                                                stream: currentUserImages
-                                                    .reference
-                                                    .collection(docId)
-                                                    .snapshots(),
-                                                builder: ((context, snapshot) {
-                                                  if (snapshot.hasError) {
-                                                    return Text(
-                                                        "Error: ${snapshot.error}");
-                                                  }
-                                                  if (!snapshot.hasData) {
-                                                    return Center(
-                                                        child:
-                                                            CircularProgressIndicator());
-                                                  }
-
-                                                  final images =
-                                                      snapshot.data!.docs;
-
-                                                  return ChallengeCalendar(
-                                                    images: images,
-                                                  );
-                                                }));
-                                          } else
+                                    if (challengers.any((c) => c.id == userId))
+                                      StreamBuilder<QuerySnapshot>(
+                                        stream: challengers
+                                            .firstWhere((c) => c.id == userId)
+                                            .reference
+                                            .collection(userId!)
+                                            .snapshots(),
+                                        builder: ((context, snapshot) {
+                                          if (snapshot.hasError) {
+                                            return Text(
+                                                "Error: ${snapshot.error}");
+                                          }
+                                          if (!snapshot.hasData) {
                                             return Center(
-                                                child: Column(
-                                              children: [
-                                                SizedBox(
-                                                  height: 50,
-                                                ),
-                                                Image(
-                                                    height: 100,
-                                                    image: AssetImage(
-                                                        'assets/images/empty.png')),
-                                                Text(
-                                                  "Let's start challenge!",
-                                                  style: TextStyle(
-                                                      color: Color(0xff7D67E6),
-                                                      fontFamily: MyfontsFamily
-                                                          .pretendardSemiBold,
-                                                      fontSize: 16),
-                                                )
-                                              ],
-                                            ));
-                                        })),
-                                    PageView.builder(
-                                        itemCount: challengers.length,
-                                        itemBuilder: ((context, index) {
-                                          final docId = challengers[index].id;
-                                          final nickname = challengers[index]
-                                              .get('nickname');
-                                          if (docId != userId) {
-                                            final currentUserImages =
-                                                challengers[index];
+                                                child:
+                                                    CircularProgressIndicator());
+                                          }
+
+                                          final images = snapshot.data!.docs;
+
+                                          return ChallengeCalendar(
+                                            images: images,
+                                          );
+                                        }),
+                                      )
+                                    else
+                                      Center(
+                                          child: Column(
+                                        children: [
+                                          SizedBox(
+                                            height: 50,
+                                          ),
+                                          Image(
+                                              height: 100,
+                                              image: AssetImage(
+                                                  'assets/images/empty.png')),
+                                          Text(
+                                            "Let's start challenge",
+                                            style: TextStyle(
+                                                color: Color(0xff7D67E6),
+                                                fontFamily: MyfontsFamily
+                                                    .pretendardSemiBold,
+                                                fontSize: 16),
+                                          )
+                                        ],
+                                      )),
+                                    if (otherChallengers.isEmpty)
+                                      Center(
+                                          child: Column(
+                                        children: [
+                                          SizedBox(
+                                            height: 50,
+                                          ),
+                                          Image(
+                                              height: 100,
+                                              image: AssetImage(
+                                                  'assets/images/empty.png')),
+                                          Text(
+                                            "No other participant",
+                                            style: TextStyle(
+                                                color: Color(0xff7D67E6),
+                                                fontFamily: MyfontsFamily
+                                                    .pretendardSemiBold,
+                                                fontSize: 16),
+                                          )
+                                        ],
+                                      ))
+                                    else
+                                      PageView.builder(
+                                          controller: _pageController,
+                                          itemCount: otherChallengers.length,
+                                          itemBuilder: ((context, index) {
+                                            final docId =
+                                                otherChallengers[index].id;
+                                            final nickname =
+                                                otherChallengers[index]
+                                                    .get('nickname');
+
                                             return StreamBuilder<QuerySnapshot>(
-                                                stream: currentUserImages
+                                                stream: otherChallengers[index]
                                                     .reference
                                                     .collection(docId)
                                                     .snapshots(),
@@ -366,9 +365,29 @@ class _ChallengePageState extends State<ChallengePage>
 
                                                   return Column(
                                                     children: [
-                                                      Text(nickname),
+                                                      SizedBox(
+                                                        height: 10,
+                                                      ),
                                                       Container(
-                                                        height: 330,
+                                                          decoration: BoxDecoration(
+                                                              color: Colors
+                                                                  .grey[50],
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10)),
+                                                          child: Text(
+                                                            "$nickname's challenge",
+                                                            style: TextStyle(
+                                                                fontSize: 14,
+                                                                fontFamily:
+                                                                    MyfontsFamily
+                                                                        .pretendardSemiBold,
+                                                                color: Color(
+                                                                    0xff7D67E6)),
+                                                          )),
+                                                      SizedBox(
+                                                        height: 320,
                                                         child:
                                                             ChallengeCalendar(
                                                           images: images,
@@ -377,28 +396,7 @@ class _ChallengePageState extends State<ChallengePage>
                                                     ],
                                                   );
                                                 }));
-                                          } else
-                                            return Center(
-                                                child: Column(
-                                              children: [
-                                                SizedBox(
-                                                  height: 50,
-                                                ),
-                                                Image(
-                                                    height: 100,
-                                                    image: AssetImage(
-                                                        'assets/images/empty.png')),
-                                                Text(
-                                                  "No other participants yet",
-                                                  style: TextStyle(
-                                                      color: Color(0xff7D67E6),
-                                                      fontFamily: MyfontsFamily
-                                                          .pretendardSemiBold,
-                                                      fontSize: 16),
-                                                )
-                                              ],
-                                            ));
-                                        })),
+                                          })),
                                   ]);
                             })),
                       ),
@@ -417,8 +415,8 @@ class _ChallengePageState extends State<ChallengePage>
               ),
             ],
           ),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerFloat,
+          // floatingActionButtonLocation:
+          //     FloatingActionButtonLocation.centerFloat,
           floatingActionButton: FloatingActionButton(
             backgroundColor: Colors.white,
             onPressed: () {
@@ -465,29 +463,32 @@ class _ChallengeCalendarState extends State<ChallengeCalendar> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: TableCalendar(
-        eventLoader: _getEventsForDay,
-        calendarBuilders: CalendarBuilders(
-          markerBuilder: (context, date, events) {
-            return Wrap(
-              children: List.generate(events.length, (index) {
-                return Container(
-                    width: 10,
-                    height: 10,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.purple[300],
-                    ));
-              }),
-            );
-          },
+      child: Padding(
+        padding: const EdgeInsets.only(left: 40, right: 40, bottom: 30),
+        child: TableCalendar(
+          eventLoader: _getEventsForDay,
+          calendarBuilders: CalendarBuilders(
+            markerBuilder: (context, date, events) {
+              return Wrap(
+                children: List.generate(events.length, (index) {
+                  return Container(
+                      width: 10,
+                      height: 10,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.purple[300],
+                      ));
+                }),
+              );
+            },
+          ),
+          headerStyle:
+              HeaderStyle(formatButtonVisible: false, titleCentered: true),
+          calendarFormat: CalendarFormat.month,
+          focusedDay: DateTime.now(),
+          firstDay: DateTime(2010, 10, 16),
+          lastDay: DateTime(2030, 3, 14),
         ),
-        headerStyle:
-            HeaderStyle(formatButtonVisible: false, titleCentered: true),
-        calendarFormat: CalendarFormat.month,
-        focusedDay: DateTime.now(),
-        firstDay: DateTime(2010, 10, 16),
-        lastDay: DateTime(2030, 3, 14),
       ),
     );
   }
