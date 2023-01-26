@@ -233,10 +233,10 @@ class _ChallengePageState extends State<ChallengePage>
                           unselectedLabelColor: Color(0xffD9D9D9),
                           tabs: [
                             Tab(
-                              text: "내 참여",
+                              text: "My",
                             ),
                             Tab(
-                              text: "다른 참가자",
+                              text: "Others",
                             )
                           ],
                         ),
@@ -261,6 +261,9 @@ class _ChallengePageState extends State<ChallengePage>
                                 return Center(
                                     child: Column(
                                   children: [
+                                    SizedBox(
+                                      height: 50,
+                                    ),
                                     Image(
                                         height: 100,
                                         image: AssetImage(
@@ -312,7 +315,26 @@ class _ChallengePageState extends State<ChallengePage>
                                                   );
                                                 }));
                                           } else
-                                            return Container();
+                                            return Center(
+                                                child: Column(
+                                              children: [
+                                                SizedBox(
+                                                  height: 50,
+                                                ),
+                                                Image(
+                                                    height: 100,
+                                                    image: AssetImage(
+                                                        'assets/images/empty.png')),
+                                                Text(
+                                                  "Let's start challenge!",
+                                                  style: TextStyle(
+                                                      color: Color(0xff7D67E6),
+                                                      fontFamily: MyfontsFamily
+                                                          .pretendardSemiBold,
+                                                      fontSize: 16),
+                                                )
+                                              ],
+                                            ));
                                         })),
                                     PageView.builder(
                                         itemCount: challengers.length,
@@ -356,7 +378,26 @@ class _ChallengePageState extends State<ChallengePage>
                                                   );
                                                 }));
                                           } else
-                                            return Container();
+                                            return Center(
+                                                child: Column(
+                                              children: [
+                                                SizedBox(
+                                                  height: 50,
+                                                ),
+                                                Image(
+                                                    height: 100,
+                                                    image: AssetImage(
+                                                        'assets/images/empty.png')),
+                                                Text(
+                                                  "No other participants yet",
+                                                  style: TextStyle(
+                                                      color: Color(0xff7D67E6),
+                                                      fontFamily: MyfontsFamily
+                                                          .pretendardSemiBold,
+                                                      fontSize: 16),
+                                                )
+                                              ],
+                                            ));
                                         })),
                                   ]);
                             })),

@@ -211,6 +211,9 @@ class _MissionPageState extends State<MissionPage> {
                           return Center(
                               child: Column(
                             children: [
+                              SizedBox(
+                                height: 50,
+                              ),
                               Image(
                                   height: 100,
                                   image: AssetImage('assets/images/empty.png')),

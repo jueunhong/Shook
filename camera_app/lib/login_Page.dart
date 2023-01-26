@@ -152,7 +152,7 @@ class _SignInState extends State<SignIn> {
                               onSuccess: () {
                                 ScaffoldMessenger.of(context)
                                     .showSnackBar(SnackBar(
-                                  content: Text("로그인 성공"),
+                                  content: Text("Sign in successful"),
                                 ));
                                 //homepage로 이동
                                 Navigator.pushReplacement(
@@ -344,7 +344,7 @@ class _SignUpState extends State<SignUp> {
                               onSuccess: () {
                                 ScaffoldMessenger.of(context)
                                     .showSnackBar(SnackBar(
-                                  content: Text("회원가입 성공"),
+                                  content: Text("Sign up successful"),
                                 ));
                                 widget.changeSignUp();
                               },

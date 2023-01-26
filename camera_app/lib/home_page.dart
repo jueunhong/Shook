@@ -111,6 +111,21 @@ class _HomePageState extends State<HomePage> {
               ),
             ],
           ),
+          // Positioned(
+          //   top: 30,
+          //   right: 8,
+          //   child: IconButton(
+          //     icon: Icon(
+          //       size: 40,
+          //       CupertinoIcons.person_solid,
+          //       color: Colors.white,
+          //     ),
+          //     onPressed: () {
+          //       Navigator.push(
+          //           context, MaterialPageRoute(builder: (context) => MyPage()));
+          //     },
+          //   ),
+          // ),
         ],
       ),
       bottomNavigationBar: BottomAppBar(
