@@ -2,6 +2,7 @@ import 'package:camera_app/fonts.dart';
 import 'package:camera_app/mission_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,7 @@ class DetailImagePage extends StatefulWidget {
 
 class _DetailImagePageState extends State<DetailImagePage> {
   final userId = FirebaseAuth.instance.currentUser?.uid;
+  String userNickname = 'default';
   bool canChoose = false;
 
   void givePointsAndSetMissionCompleted(SelectedImage selectedImage) async {
@@ -52,6 +54,13 @@ class _DetailImagePageState extends State<DetailImagePage> {
     if (widget.images[widget.index].missionUploaderId == userId) {
       canChoose = !canChoose;
     }
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.images[widget.index].imageUploaderId)
+        .get()
+        .then((snapshot) => setState(() {
+              userNickname = snapshot.data()!['nickname'];
+            }));
   }
 
   @override
@@ -75,11 +84,51 @@ class _DetailImagePageState extends State<DetailImagePage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.network(
-                      widget.images[index].imageUrl,
-                      height: 380,
-                      width: 260,
-                      fit: BoxFit.cover,
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.7,
+                      child: Card(
+                        color: Colors.white,
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 16, right: 25.0, left: 25, bottom: 22),
+                                child: Image.network(
+                                  widget.images[index].imageUrl,
+                                  height: 340,
+                                  width: 230,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 25.0, bottom: 16),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      'Photo by',
+                                      style: TextStyle(
+                                          color: Color(0xff5F50B1),
+                                          fontFamily:
+                                              MyfontsFamily.pretendardSemiBold),
+                                    ),
+                                    Text('  '),
+                                    Text(
+                                      userNickname,
+                                      style: TextStyle(
+                                          color: Color(0xffAFA8D8),
+                                          fontFamily:
+                                              MyfontsFamily.pretendardSemiBold),
+                                    )
+                                  ],
+                                ),
+                              )
+                            ]),
+                      ),
                     ),
                     SizedBox(
                       height: 30,
@@ -160,7 +209,7 @@ class _DetailImagePageState extends State<DetailImagePage> {
                                 style: TextStyle(
                                   fontFamily: MyfontsFamily.pretendardSemiBold,
                                   color: Colors.white,
-                                  fontSize: 32,
+                                  fontSize: 28,
                                 ),
                               ),
                             ),

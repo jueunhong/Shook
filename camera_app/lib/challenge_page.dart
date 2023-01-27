@@ -482,7 +482,7 @@ class _ChallengeCalendarState extends State<ChallengeCalendar> {
                       barrierDismissible: true,
                       builder: (context) {
                         return AlertDialog(
-                          content: Container(
+                          content: SizedBox(
                             height: MediaQuery.of(context).size.height * 0.7,
                             child: SizedBox(
                               width: 100,
@@ -530,7 +530,8 @@ class _ChallengeCalendarState extends State<ChallengeCalendar> {
                                               's',
                                           style: TextStyle(
                                               fontFamily: MyfontsFamily
-                                                  .pretendardSemiBold),
+                                                  .pretendardSemiBold,
+                                              color: Color(0xff5F50B1)),
                                         ),
                                         SizedBox(
                                           height: 40,

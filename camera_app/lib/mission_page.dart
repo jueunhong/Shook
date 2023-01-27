@@ -204,7 +204,11 @@ class _MissionPageState extends State<MissionPage> {
                               child: Text("Error: ${snapshot.error}"));
                         }
                         if (!snapshot.hasData) {
-                          return Center(child: CircularProgressIndicator());
+                          return Center(
+                              child: Container(
+                                  width: 100,
+                                  height: 100,
+                                  child: CircularProgressIndicator()));
                         }
 
                         if (snapshot.data!.isEmpty) {
@@ -252,11 +256,14 @@ class _MissionPageState extends State<MissionPage> {
                                                 index: index,
                                               )));
                                 },
-                                child: Image.network(
-                                  image.imageUrl,
-                                  width: 10,
-                                  height: 10,
-                                  fit: BoxFit.cover,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Image.network(
+                                    image.imageUrl,
+                                    width: 10,
+                                    height: 10,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ));
                           },
                         );

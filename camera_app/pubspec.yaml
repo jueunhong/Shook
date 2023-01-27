@@ -44,6 +44,7 @@ dependencies:
   provider: ^6.0.5
   firebase_storage: ^11.0.10
   table_calendar: ^3.0.8
+  firebase_messaging: ^14.2.1
 
 dev_dependencies:
   flutter_test:
