@@ -272,6 +272,7 @@ class _ChallengePageState extends State<ChallengePage>
                                             .firstWhere((c) => c.id == userId)
                                             .reference
                                             .collection(userId!)
+                                            .orderBy('date', descending: false)
                                             .snapshots(),
                                         builder: ((context, snapshot) {
                                           if (snapshot.hasError) {
@@ -450,8 +451,8 @@ class _ChallengeCalendarState extends State<ChallengeCalendar> {
   ) {
     widget.images.forEach((image) {
       final date = DateTime.fromMillisecondsSinceEpoch(image.get('date'));
-      _eventsList[date] ??= 0;
-      _eventsList[date]++;
+      _eventsList[date] ??= [];
+      _eventsList[date].add(image);
     });
 
     return _eventsList.entries
@@ -469,16 +470,91 @@ class _ChallengeCalendarState extends State<ChallengeCalendar> {
           eventLoader: _getEventsForDay,
           calendarBuilders: CalendarBuilders(
             markerBuilder: (context, date, events) {
-              return Wrap(
-                children: List.generate(events.length, (index) {
-                  return Container(
-                      width: 10,
-                      height: 10,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.purple[300],
-                      ));
-                }),
+              return InkWell(
+                onTap: () {
+                  final imagesOnSelectedDay = widget.images.where((image) {
+                    return isSameDay(
+                        DateTime.fromMillisecondsSinceEpoch(image.get('date')),
+                        date);
+                  }).toList();
+                  showDialog(
+                      context: context,
+                      barrierDismissible: true,
+                      builder: (context) {
+                        return AlertDialog(
+                          content: Container(
+                            height: MediaQuery.of(context).size.height * 0.7,
+                            child: SizedBox(
+                              width: 100,
+                              height: 300,
+                              child: PageView.builder(
+                                  itemCount: imagesOnSelectedDay.length,
+                                  itemBuilder: (context, index) {
+                                    final image = imagesOnSelectedDay[index];
+                                    final tsdate = image['date'];
+                                    return Column(
+                                      children: [
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        Text(
+                                          DateTime.fromMillisecondsSinceEpoch(
+                                                      tsdate)
+                                                  .year
+                                                  .toString() +
+                                              '/' +
+                                              DateTime.fromMillisecondsSinceEpoch(
+                                                      tsdate)
+                                                  .month
+                                                  .toString() +
+                                              '/' +
+                                              DateTime.fromMillisecondsSinceEpoch(
+                                                      tsdate)
+                                                  .day
+                                                  .toString() +
+                                              ' ' +
+                                              DateTime.fromMillisecondsSinceEpoch(
+                                                      tsdate)
+                                                  .hour
+                                                  .toString() +
+                                              ':' +
+                                              DateTime.fromMillisecondsSinceEpoch(
+                                                      tsdate)
+                                                  .minute
+                                                  .toString() +
+                                              ' ' +
+                                              DateTime.fromMillisecondsSinceEpoch(
+                                                      tsdate)
+                                                  .second
+                                                  .toString() +
+                                              's',
+                                          style: TextStyle(
+                                              fontFamily: MyfontsFamily
+                                                  .pretendardSemiBold),
+                                        ),
+                                        SizedBox(
+                                          height: 40,
+                                        ),
+                                        Image.network(image['image'])
+                                      ],
+                                    );
+                                  }),
+                            ),
+                          ),
+                        );
+                      });
+                },
+                child: Wrap(
+                  children: List.generate(events.length, (index) {
+                    return Container(
+                        width: 10,
+                        height: 10,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.purple[300],
+                        ));
+                  }),
+                ),
               );
             },
           ),
