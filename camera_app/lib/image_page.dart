@@ -93,12 +93,15 @@ class _DetailImagePageState extends State<DetailImagePage> {
                             children: [
                               Padding(
                                 padding: const EdgeInsets.only(
-                                    top: 16, right: 25.0, left: 25, bottom: 22),
-                                child: Image.network(
-                                  widget.images[index].imageUrl,
-                                  height: 340,
-                                  width: 230,
-                                  fit: BoxFit.cover,
+                                    top: 20, right: 25.0, left: 25, bottom: 22),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.network(
+                                    widget.images[index].imageUrl,
+                                    height: 340,
+                                    width: 230,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
                               SizedBox(

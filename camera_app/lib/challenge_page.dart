@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'fonts.dart';
@@ -84,6 +85,7 @@ class _ChallengePageState extends State<ChallengePage>
         'user': userId,
         'date': DateTime.now().millisecondsSinceEpoch,
         'isConfirm': false,
+        'likes': [],
       });
     }
   }
@@ -461,8 +463,12 @@ class ChallengeCalendar extends StatefulWidget {
 }
 
 class _ChallengeCalendarState extends State<ChallengeCalendar> {
+  final userId = FirebaseAuth.instance.currentUser?.uid;
+
   final _eventsList = {};
   bool isConfirm = false;
+  bool isLike = false;
+  int likesCount = 0;
   List _getEventsForDay(
     DateTime day,
   ) {
@@ -490,6 +496,24 @@ class _ChallengeCalendarState extends State<ChallengeCalendar> {
 
     await imagesCollection
         .set({'isConfirm': isConfirm}, SetOptions(merge: true));
+  }
+
+  void addLike(String imageUploader, String imageId, bool isLike) async {
+    final imagesCollection = FirebaseFirestore.instance
+        .collection("challenges")
+        .doc(widget.challengeId)
+        .collection("challengers")
+        .doc(imageUploader)
+        .collection(imageUploader)
+        .doc(imageId);
+
+    isLike
+        ? imagesCollection.update({
+            "likes": FieldValue.arrayUnion([userId])
+          })
+        : imagesCollection.update({
+            "likes": FieldValue.arrayRemove([userId])
+          });
   }
 
   @override
@@ -535,6 +559,39 @@ class _ChallengeCalendarState extends State<ChallengeCalendar> {
                                           .then((snapshot) => setState(() {
                                                 isConfirm = snapshot
                                                     .data()!['isConfirm'];
+                                              }));
+                                      final likesCollection = FirebaseFirestore
+                                          .instance
+                                          .collection("challenges")
+                                          .doc(widget.challengeId)
+                                          .collection("challengers")
+                                          .doc(image['user'])
+                                          .collection(image['user'])
+                                          .doc(image.id)
+                                          .get()
+                                          .then((snapshot) => setState(() {
+                                                if (snapshot
+                                                    .data()!['likes']
+                                                    .any((element) =>
+                                                        element == userId)) {
+                                                  isLike = true;
+                                                } else {
+                                                  isLike = false;
+                                                }
+                                              }));
+                                      final likesCollection2 = FirebaseFirestore
+                                          .instance
+                                          .collection("challenges")
+                                          .doc(widget.challengeId)
+                                          .collection("challengers")
+                                          .doc(image['user'])
+                                          .collection(image['user'])
+                                          .doc(image.id)
+                                          .get()
+                                          .then((snapshot) => setState(() {
+                                                likesCount = snapshot
+                                                    .data()!['likes']
+                                                    .length;
                                               }));
 
                                       final tsdate = image['date'];
@@ -583,34 +640,130 @@ class _ChallengeCalendarState extends State<ChallengeCalendar> {
                                           SizedBox(
                                             height: 40,
                                           ),
-                                          Image.network(image['image']),
-                                          widget.canChoose
-                                              ? IconButton(
+                                          ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              child: Image.network(
+                                                  image['image'])),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Row(
+                                            children: [
+                                              IconButton(
                                                   onPressed: () {
                                                     setState(() {
-                                                      isConfirm = !isConfirm;
+                                                      isLike = !isLike;
                                                     });
-                                                    confirmChallengeImage(
-                                                        image['user'],
-                                                        image.id,
-                                                        isConfirm);
+                                                    addLike(image['user'],
+                                                        image.id, isLike);
                                                   },
-                                                  icon: isConfirm
+                                                  icon: isLike
                                                       ? Icon(
                                                           CupertinoIcons
-                                                              .check_mark_circled_solid,
-                                                          size: 30,
+                                                              .heart_fill,
                                                           color:
                                                               Color(0xff5F50B1),
                                                         )
                                                       : Icon(
-                                                          CupertinoIcons
-                                                              .check_mark_circled,
-                                                          size: 30,
+                                                          CupertinoIcons.heart,
                                                           color:
-                                                              Color(0xffA395EE),
-                                                        ))
-                                              : Container(),
+                                                              Color(0xff5F50B1),
+                                                        )),
+                                              Text(
+                                                likesCount == 0
+                                                    ? '$likesCount like'
+                                                    : '$likesCount likes',
+                                                style: TextStyle(
+                                                    fontFamily: MyfontsFamily
+                                                        .pretendardMedium,
+                                                    color: Color(0xff5F50B1),
+                                                    fontSize: 14),
+                                              ),
+                                              Spacer(),
+                                              widget.canChoose
+                                                  ? TextButton.icon(
+                                                      style: TextButton.styleFrom(
+                                                          backgroundColor:
+                                                              isConfirm
+                                                                  ? Color(
+                                                                      0xff5F50B1)
+                                                                  : Colors
+                                                                      .white,
+                                                          shape: RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          24),
+                                                              side: BorderSide(
+                                                                  width: 1,
+                                                                  color: isConfirm
+                                                                      ? Colors
+                                                                          .grey
+                                                                      : Color(
+                                                                          0xff5F50B1)))),
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          isConfirm =
+                                                              !isConfirm;
+                                                        });
+                                                        confirmChallengeImage(
+                                                            image['user'],
+                                                            image.id,
+                                                            isConfirm);
+                                                      },
+                                                      label: isConfirm
+                                                          ? Text(
+                                                              'Confirmed!',
+                                                              style: TextStyle(
+                                                                  fontFamily:
+                                                                      MyfontsFamily
+                                                                          .pretendardMedium,
+                                                                  color: Colors
+                                                                      .white),
+                                                            )
+                                                          : Text('Confirm!',
+                                                              style: TextStyle(
+                                                                  fontFamily:
+                                                                      MyfontsFamily
+                                                                          .pretendardMedium,
+                                                                  color: Color(
+                                                                      0xff5F50B1))),
+                                                      icon: isConfirm
+                                                          ? Icon(
+                                                              CupertinoIcons
+                                                                  .check_mark_circled_solid,
+                                                              size: 16,
+                                                              color:
+                                                                  Colors.white,
+                                                            )
+                                                          : Icon(
+                                                              CupertinoIcons
+                                                                  .check_mark_circled,
+                                                              size: 16,
+                                                              color: Color(
+                                                                  0xff5F50B1),
+                                                            ),
+                                                    )
+                                                  : (isConfirm
+                                                      ? Text('Confirmed!',
+                                                          style: TextStyle(
+                                                              fontSize: 14,
+                                                              fontFamily:
+                                                                  MyfontsFamily
+                                                                      .pretendardMedium,
+                                                              color: Color(
+                                                                  0xff5F50B1)))
+                                                      : Text('Not Confirmed',
+                                                          style: TextStyle(
+                                                              fontSize: 14,
+                                                              fontFamily:
+                                                                  MyfontsFamily
+                                                                      .pretendardMedium,
+                                                              color: Color(
+                                                                  0xff5F50B1)))),
+                                            ],
+                                          ),
                                         ],
                                       );
                                     }),
@@ -622,13 +775,11 @@ class _ChallengeCalendarState extends State<ChallengeCalendar> {
                 },
                 child: Wrap(
                   children: List.generate(events.length, (index) {
-                    return Container(
-                        width: 10,
-                        height: 10,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.purple[300],
-                        ));
+                    return Icon(
+                      CupertinoIcons.sparkles,
+                      size: 14,
+                      color: Color(0xff5F50B1),
+                    );
                   }),
                 ),
               );
