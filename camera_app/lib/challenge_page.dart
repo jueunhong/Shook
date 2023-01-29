@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:camera_app/image_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -24,15 +25,19 @@ class _ChallengePageState extends State<ChallengePage>
     with TickerProviderStateMixin {
   TabController? _tabController;
   PageController _pageController = PageController();
+  bool canChoose = false;
+  final userId = FirebaseAuth.instance.currentUser?.uid;
 
   @override
   void initState() {
     super.initState();
+    if (widget.challenge.challengeUploader == userId) {
+      canChoose = !canChoose;
+    }
     _tabController = TabController(length: 2, vsync: this);
   }
 
   final picker = ImagePicker();
-  final userId = FirebaseAuth.instance.currentUser?.uid;
   File? _image;
 
   final _chars =
@@ -78,6 +83,7 @@ class _ChallengePageState extends State<ChallengePage>
         'image': userImageUrl,
         'user': userId,
         'date': DateTime.now().millisecondsSinceEpoch,
+        'isConfirm': false,
       });
     }
   }
@@ -288,7 +294,10 @@ class _ChallengePageState extends State<ChallengePage>
                                           final images = snapshot.data!.docs;
 
                                           return ChallengeCalendar(
+                                            canChoose: canChoose,
                                             images: images,
+                                            challengeId:
+                                                widget.challenge.challengeId,
                                           );
                                         }),
                                       )
@@ -389,10 +398,13 @@ class _ChallengePageState extends State<ChallengePage>
                                                           )),
                                                       SizedBox(
                                                         height: 320,
-                                                        child:
-                                                            ChallengeCalendar(
-                                                          images: images,
-                                                        ),
+                                                        child: ChallengeCalendar(
+                                                            canChoose:
+                                                                canChoose,
+                                                            images: images,
+                                                            challengeId: widget
+                                                                .challenge
+                                                                .challengeId),
                                                       ),
                                                     ],
                                                   );
@@ -437,15 +449,20 @@ class ChallengeCalendar extends StatefulWidget {
   const ChallengeCalendar({
     Key? key,
     required this.images,
+    required this.canChoose,
+    required this.challengeId,
   }) : super(key: key);
   final List<QueryDocumentSnapshot> images;
+  final bool canChoose;
+  final String challengeId;
+
   @override
   State<ChallengeCalendar> createState() => _ChallengeCalendarState();
 }
 
 class _ChallengeCalendarState extends State<ChallengeCalendar> {
   final _eventsList = {};
-
+  bool isConfirm = false;
   List _getEventsForDay(
     DateTime day,
   ) {
@@ -459,6 +476,20 @@ class _ChallengeCalendarState extends State<ChallengeCalendar> {
         .where((e) => isSameDay(e.key, day))
         .map((e) => e.value)
         .toList();
+  }
+
+  void confirmChallengeImage(
+      String imageUploader, String imageId, bool isConfirm) async {
+    final imagesCollection = FirebaseFirestore.instance
+        .collection("challenges")
+        .doc(widget.challengeId)
+        .collection("challengers")
+        .doc(imageUploader)
+        .collection(imageUploader)
+        .doc(imageId);
+
+    await imagesCollection
+        .set({'isConfirm': isConfirm}, SetOptions(merge: true));
   }
 
   @override
@@ -481,68 +512,112 @@ class _ChallengeCalendarState extends State<ChallengeCalendar> {
                       context: context,
                       barrierDismissible: true,
                       builder: (context) {
-                        return AlertDialog(
-                          content: SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.7,
-                            child: SizedBox(
-                              width: 100,
-                              height: 300,
-                              child: PageView.builder(
-                                  itemCount: imagesOnSelectedDay.length,
-                                  itemBuilder: (context, index) {
-                                    final image = imagesOnSelectedDay[index];
-                                    final tsdate = image['date'];
-                                    return Column(
-                                      children: [
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        Text(
-                                          DateTime.fromMillisecondsSinceEpoch(
-                                                      tsdate)
-                                                  .year
-                                                  .toString() +
-                                              '/' +
-                                              DateTime.fromMillisecondsSinceEpoch(
-                                                      tsdate)
-                                                  .month
-                                                  .toString() +
-                                              '/' +
-                                              DateTime.fromMillisecondsSinceEpoch(
-                                                      tsdate)
-                                                  .day
-                                                  .toString() +
-                                              ' ' +
-                                              DateTime.fromMillisecondsSinceEpoch(
-                                                      tsdate)
-                                                  .hour
-                                                  .toString() +
-                                              ':' +
-                                              DateTime.fromMillisecondsSinceEpoch(
-                                                      tsdate)
-                                                  .minute
-                                                  .toString() +
-                                              ' ' +
-                                              DateTime.fromMillisecondsSinceEpoch(
-                                                      tsdate)
-                                                  .second
-                                                  .toString() +
-                                              's',
-                                          style: TextStyle(
-                                              fontFamily: MyfontsFamily
-                                                  .pretendardSemiBold,
-                                              color: Color(0xff5F50B1)),
-                                        ),
-                                        SizedBox(
-                                          height: 40,
-                                        ),
-                                        Image.network(image['image'])
-                                      ],
-                                    );
-                                  }),
+                        return StatefulBuilder(builder: (context, setState) {
+                          return AlertDialog(
+                            content: SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.7,
+                              child: SizedBox(
+                                width: 100,
+                                height: 300,
+                                child: PageView.builder(
+                                    itemCount: imagesOnSelectedDay.length,
+                                    itemBuilder: (context, index) {
+                                      final image = imagesOnSelectedDay[index];
+                                      final imagesCollection = FirebaseFirestore
+                                          .instance
+                                          .collection("challenges")
+                                          .doc(widget.challengeId)
+                                          .collection("challengers")
+                                          .doc(image['user'])
+                                          .collection(image['user'])
+                                          .doc(image.id)
+                                          .get()
+                                          .then((snapshot) => setState(() {
+                                                isConfirm = snapshot
+                                                    .data()!['isConfirm'];
+                                              }));
+
+                                      final tsdate = image['date'];
+                                      return Column(
+                                        children: [
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Text(
+                                            DateTime
+                                                        .fromMillisecondsSinceEpoch(
+                                                            tsdate)
+                                                    .year
+                                                    .toString() +
+                                                '/' +
+                                                DateTime.fromMillisecondsSinceEpoch(
+                                                        tsdate)
+                                                    .month
+                                                    .toString() +
+                                                '/' +
+                                                DateTime.fromMillisecondsSinceEpoch(
+                                                        tsdate)
+                                                    .day
+                                                    .toString() +
+                                                ' ' +
+                                                DateTime.fromMillisecondsSinceEpoch(
+                                                        tsdate)
+                                                    .hour
+                                                    .toString() +
+                                                ':' +
+                                                DateTime.fromMillisecondsSinceEpoch(
+                                                        tsdate)
+                                                    .minute
+                                                    .toString() +
+                                                ' ' +
+                                                DateTime.fromMillisecondsSinceEpoch(
+                                                        tsdate)
+                                                    .second
+                                                    .toString() +
+                                                's',
+                                            style: TextStyle(
+                                                fontFamily: MyfontsFamily
+                                                    .pretendardSemiBold,
+                                                color: Color(0xff5F50B1)),
+                                          ),
+                                          SizedBox(
+                                            height: 40,
+                                          ),
+                                          Image.network(image['image']),
+                                          widget.canChoose
+                                              ? IconButton(
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      isConfirm = !isConfirm;
+                                                    });
+                                                    confirmChallengeImage(
+                                                        image['user'],
+                                                        image.id,
+                                                        isConfirm);
+                                                  },
+                                                  icon: isConfirm
+                                                      ? Icon(
+                                                          CupertinoIcons
+                                                              .check_mark_circled_solid,
+                                                          size: 30,
+                                                          color:
+                                                              Color(0xff5F50B1),
+                                                        )
+                                                      : Icon(
+                                                          CupertinoIcons
+                                                              .check_mark_circled,
+                                                          size: 30,
+                                                          color:
+                                                              Color(0xffA395EE),
+                                                        ))
+                                              : Container(),
+                                        ],
+                                      );
+                                    }),
+                              ),
                             ),
-                          ),
-                        );
+                          );
+                        });
                       });
                 },
                 child: Wrap(
@@ -568,124 +643,5 @@ class _ChallengeCalendarState extends State<ChallengeCalendar> {
         ),
       ),
     );
-  }
-}
-
-class DetailChallengePage extends StatefulWidget {
-  const DetailChallengePage(
-      {Key? key,
-      required this.challengers,
-      required this.challengersIndex,
-      required this.imageIndex})
-      : super(key: key);
-  final List challengers;
-  final int challengersIndex;
-  final int imageIndex;
-  @override
-  State<DetailChallengePage> createState() => _DetailChallengePageState();
-}
-
-class _DetailChallengePageState extends State<DetailChallengePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        body: PageView.builder(
-      controller: PageController(initialPage: widget.challengersIndex),
-      itemCount: widget.challengers.length,
-      itemBuilder: ((context, index) {
-        final userId = widget.challengers[index].id;
-        final imagesStream = widget.challengers[index];
-        final userNickname = imagesStream.get('nickname');
-        return Stack(children: [
-          Container(
-              height: 390,
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                fit: BoxFit.cover,
-                image: AssetImage('assets/images/imagepage_bg.png'),
-              ))),
-          Align(
-            alignment: Alignment.center,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('$userNickname님의 참여 사진입니다!'),
-                StreamBuilder<QuerySnapshot>(
-                    stream:
-                        imagesStream.reference.collection(userId).snapshots(),
-                    builder: ((context, snapshot) {
-                      if (snapshot.hasError) {
-                        return Text("Error: ${snapshot.error}");
-                      }
-                      if (!snapshot.hasData) {
-                        return Center(child: CircularProgressIndicator());
-                      }
-
-                      final images = snapshot.data!.docs;
-
-                      return SizedBox(
-                        width: 300,
-                        height: 400,
-                        child: ListView.builder(
-                            controller:
-                                PageController(initialPage: widget.imageIndex),
-                            itemCount: images.length,
-                            itemBuilder: ((context, index) {
-                              final image = images[index];
-                              final tsdate = image['date'];
-                              return Card(
-                                child: Column(
-                                  children: [
-                                    Text(
-                                        DateTime.fromMillisecondsSinceEpoch(
-                                                    tsdate)
-                                                .year
-                                                .toString() +
-                                            '/' +
-                                            DateTime.fromMillisecondsSinceEpoch(
-                                                    tsdate)
-                                                .month
-                                                .toString() +
-                                            '/' +
-                                            DateTime.fromMillisecondsSinceEpoch(
-                                                    tsdate)
-                                                .day
-                                                .toString() +
-                                            ' ' +
-                                            DateTime.fromMillisecondsSinceEpoch(
-                                                    tsdate)
-                                                .hour
-                                                .toString() +
-                                            '시' +
-                                            ' ' +
-                                            DateTime.fromMillisecondsSinceEpoch(
-                                                    tsdate)
-                                                .minute
-                                                .toString() +
-                                            '분'),
-                                    Image.network(image['image'])
-                                  ],
-                                ),
-                              );
-                            })),
-                      );
-                    })),
-              ],
-            ),
-          ),
-          Positioned(
-            top: 14,
-            child: IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: Icon(
-                  CupertinoIcons.arrow_left,
-                  color: Colors.white,
-                )),
-          )
-        ]);
-      }),
-    ));
   }
 }
