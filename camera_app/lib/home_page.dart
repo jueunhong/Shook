@@ -20,6 +20,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool isMissionTap = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

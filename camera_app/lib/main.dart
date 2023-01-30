@@ -1,18 +1,21 @@
 import 'package:camera_app/auth_service.dart';
 import 'package:camera_app/home_page.dart';
 import 'package:camera_app/login_page.dart';
+import 'package:camera_app/notification_controller.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'mission_page.dart';
-import 'take_picture.dart';
 import 'my_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  Get.put(NotificationController(), permanent: true);
+  Get.find<NotificationController>().initialize();
+
   runApp(
     MultiProvider(
       providers: [
@@ -30,7 +33,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = context.read<AuthService>().currentUser();
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       initialRoute: 'login',
       routes: {
