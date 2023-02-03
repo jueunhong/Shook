@@ -560,21 +560,21 @@ class DurationFormField extends FormField {
                           style: TextButton.styleFrom(
                             side: BorderSide(
                                 width: 1.5,
-                                color: state.value == "매일"
+                                color: state.value == "daily"
                                     ? Color(0xff5F50B1)
                                     : Color(0xffD9D9D9)),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8)),
                           ),
                           onPressed: () {
-                            state.didChange("매일");
+                            state.didChange("daily");
                           },
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 14),
                             child: Text(
-                              '매일',
+                              'daily',
                               style: TextStyle(
-                                  color: state.value == "매일"
+                                  color: state.value == "daily"
                                       ? Color(0xff5F50B1)
                                       : Color(0xffD9D9D9)),
                             ),
@@ -584,21 +584,21 @@ class DurationFormField extends FormField {
                           style: TextButton.styleFrom(
                             side: BorderSide(
                                 width: 1.5,
-                                color: state.value == "일주일"
+                                color: state.value == "weekly"
                                     ? Color(0xff5F50B1)
                                     : Color(0xffD9D9D9)),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8)),
                           ),
                           onPressed: () {
-                            state.didChange("일주일");
+                            state.didChange("weekly");
                           },
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 14),
                             child: Text(
-                              '일주일간',
+                              'weekly',
                               style: TextStyle(
-                                  color: state.value == '일주일'
+                                  color: state.value == 'weekly'
                                       ? Color(0xff5F50B1)
                                       : Color(0xffD9D9D9)),
                             ),
@@ -608,21 +608,21 @@ class DurationFormField extends FormField {
                           style: TextButton.styleFrom(
                             side: BorderSide(
                                 width: 1.5,
-                                color: state.value == "한 달"
+                                color: state.value == "monthly"
                                     ? Color(0xff5F50B1)
                                     : Color(0xffD9D9D9)),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8)),
                           ),
                           onPressed: () {
-                            state.didChange("한 달");
+                            state.didChange("monthly");
                           },
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 14),
                             child: Text(
-                              '한 달간',
+                              'monthly',
                               style: TextStyle(
-                                  color: state.value == "한 달"
+                                  color: state.value == "monthly"
                                       ? Color(0xff5F50B1)
                                       : Color(0xffD9D9D9)),
                             ),

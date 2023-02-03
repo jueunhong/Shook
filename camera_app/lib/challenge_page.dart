@@ -160,7 +160,7 @@ class _ChallengePageState extends State<ChallengePage>
                             child: Padding(
                               padding: const EdgeInsets.all(5.0),
                               child: Text(
-                                '${widget.challenge.challengeGoals} 장',
+                                '${widget.challenge.challengeGoals} pic',
                                 style: TextStyle(
                                   fontFamily: MyfontsFamily.pretendardSemiBold,
                                   fontSize: 12,

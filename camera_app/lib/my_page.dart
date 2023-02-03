@@ -1,6 +1,7 @@
 import 'package:camera_app/auth_service.dart';
 import 'package:camera_app/fonts.dart';
 import 'package:camera_app/ranking_page.dart';
+import 'package:camera_app/web3.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -131,6 +132,9 @@ class _MyPageState extends State<MyPage> {
               ],
             ),
           ),
+        ),
+        Center(
+          child: SendToken(),
         ),
         Positioned(
           top: 14,

@@ -306,8 +306,8 @@ class _ChallengeTapState extends State<ChallengeTap> {
     });
   }
 
-  final durationType = ["매일", "일주일", "한 달"];
-  String selectedDuration = '매일';
+  final durationType = ["daily", "weekly", "monthly"];
+  String selectedDuration = 'daily';
   List<Challenge> selectedChallenges = [];
 
   @override
@@ -407,7 +407,7 @@ class _ChallengeTapState extends State<ChallengeTap> {
                                 ),
                               ),
                               SizedBox(
-                                width: 10,
+                                width: 8,
                               ),
                               Container(
                                 decoration: BoxDecoration(
@@ -416,7 +416,7 @@ class _ChallengeTapState extends State<ChallengeTap> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(5.0),
                                   child: Text(
-                                    '${challenge.challengeGoals} 장',
+                                    '${challenge.challengeGoals} pic',
                                     style: TextStyle(
                                       fontFamily:
                                           MyfontsFamily.pretendardSemiBold,

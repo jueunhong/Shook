@@ -48,6 +48,7 @@ dependencies:
   like_button: ^2.0.5
   flutter_local_notifications: ^13.0.0
   get: ^4.6.5
+  web3dart: ^2.5.1
 
 dev_dependencies:
   flutter_test:
@@ -67,6 +68,8 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
+    - assets/
+    - assets/abi.json
     - assets/images/
     - assets/icons/
     - assets/fonts/
