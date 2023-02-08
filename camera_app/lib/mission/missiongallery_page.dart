@@ -1,18 +1,15 @@
-
 import 'package:camera_app/fonts.dart';
-import 'package:camera_app/mission_page.dart';
+import 'package:camera_app/mission/mission_page.dart';
 import 'package:camera_app/ranking_page.dart';
-
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../home/home_page.dart';
 
-import 'home_page.dart';
-
-import 'my_page.dart';
+import '../mypage/my_page.dart';
 
 class MissionGallery extends StatefulWidget {
   const MissionGallery({super.key});

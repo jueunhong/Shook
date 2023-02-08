@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
-import 'home_page.dart';
+import '../home/home_page.dart';
 import 'image_page.dart';
 
 class MissionPage extends StatefulWidget {

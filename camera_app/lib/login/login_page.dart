@@ -1,4 +1,4 @@
-import 'package:camera_app/auth_service.dart';
+import 'package:camera_app/login/auth_service.dart';
 import 'package:camera_app/fonts.dart';
 import 'package:camera_app/take_picture.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
-import 'home_page.dart';
+import '../home/home_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);

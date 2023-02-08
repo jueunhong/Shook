@@ -3,9 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'home_page.dart';
-import 'missiongallery_page.dart';
-import 'my_page.dart';
+import 'home/home_page.dart';
+import 'mission/missiongallery_page.dart';
+import 'mypage/my_page.dart';
 
 class RankingPage extends StatefulWidget {
   const RankingPage({super.key});

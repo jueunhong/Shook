@@ -1,15 +1,15 @@
-import 'package:camera_app/challenge_page.dart';
-import 'package:camera_app/missiongallery_page.dart';
+import 'package:camera_app/challenge/challenge_page.dart';
+import 'package:camera_app/mission/missiongallery_page.dart';
 import 'package:camera_app/ranking_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'fonts.dart';
+import '../fonts.dart';
 
 import 'createmission_page.dart';
-import 'mission_page.dart';
-import 'my_page.dart';
+import '../mission/mission_page.dart';
+import '../mypage/my_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

@@ -8,8 +8,8 @@ import 'package:flutter/cupertino.dart';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'fonts.dart';
-import 'home_page.dart';
+import '../fonts.dart';
+import '../home/home_page.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class ChallengePage extends StatefulWidget {

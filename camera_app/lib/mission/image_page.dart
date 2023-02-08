@@ -1,5 +1,5 @@
 import 'package:camera_app/fonts.dart';
-import 'package:camera_app/mission_page.dart';
+import 'package:camera_app/mission/mission_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -43,7 +43,7 @@ class _DetailImagePageState extends State<DetailImagePage> {
         .set({'points': FieldValue.increment(10)}, SetOptions(merge: true));
     await missionDoc.set({
       'isCompleted': true,
-      'selectedImageId': selectedImage.imageId,
+      'selectedImageId': selectedImage.imageUrl,
       'selectedImageUploader': selectedImage.imageUploaderId,
     }, SetOptions(merge: true));
   }
@@ -170,9 +170,9 @@ class _DetailImagePageState extends State<DetailImagePage> {
                                                       missionUploaderId: widget
                                                           .images[index]
                                                           .missionUploaderId,
-                                                      imageId: widget
+                                                      imageUrl: widget
                                                           .images[index]
-                                                          .imageId,
+                                                          .imageUrl,
                                                       imageUploaderId: widget
                                                           .images[index]
                                                           .imageUploaderId));
@@ -243,13 +243,13 @@ class _DetailImagePageState extends State<DetailImagePage> {
 class SelectedImage {
   final String missionId;
   final String missionUploaderId;
-  final String imageId;
+  final String imageUrl;
   final String imageUploaderId;
 
   SelectedImage({
     required this.missionId,
     required this.missionUploaderId,
-    required this.imageId,
+    required this.imageUrl,
     required this.imageUploaderId,
   });
 }
