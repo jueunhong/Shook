@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "457609124657",
+    "project_id": "cameraapp-9f892",
+    "storage_bucket": "cameraapp-9f892.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:457609124657:android:71aa51559536e4507a2e10",
+        "android_client_info": {
+          "package_name": "com.shook.mvp.camera_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "457609124657-nsmomabs3fuaq5t782ucoftr73oemgpp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCtkz8XYwnAYrqqEHq3VJa6QS6ug7RQ6o0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "457609124657-nsmomabs3fuaq5t782ucoftr73oemgpp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
