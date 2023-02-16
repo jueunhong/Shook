@@ -49,6 +49,11 @@ class _MissionPageState extends State<MissionPage> {
         'images/${widget.mission.missionId}/$userId/${getRandomString(5)}');
     final imageUploaderDoc =
         FirebaseFirestore.instance.collection('users').doc(userId);
+
+    final missionDoc = FirebaseFirestore.instance
+        .collection("missions")
+        .doc(widget.mission.missionId);
+
     final imagesCollection = FirebaseFirestore.instance
         .collection("missions")
         .doc(widget.mission.missionId)
@@ -62,6 +67,9 @@ class _MissionPageState extends State<MissionPage> {
         'user': userId,
       });
     }
+    await missionDoc.set({
+      'imageUploaders': FieldValue.arrayUnion([userId])
+    }, SetOptions(merge: true));
     await imageUploaderDoc
         .set({'points': FieldValue.increment(5)}, SetOptions(merge: true));
   }

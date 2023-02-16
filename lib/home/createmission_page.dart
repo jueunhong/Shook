@@ -153,6 +153,7 @@ class _CreateMissionPageState extends State<CreateMissionPage> {
                               'desc': _descController.text,
                               'user': userId,
                               'isCompleted': false,
+                              'imageUploaders': [],
                             });
                             Navigator.pop(context);
                           }
