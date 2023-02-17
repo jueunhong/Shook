@@ -95,6 +95,13 @@ class _ChallengePageState extends State<ChallengePage>
         'likes': [],
       });
     }
+
+    //give point to participants
+    final participantDoc =
+        FirebaseFirestore.instance.collection('users').doc(userId);
+
+    await participantDoc
+        .set({'points': FieldValue.increment(10)}, SetOptions(merge: true));
   }
 
   @override

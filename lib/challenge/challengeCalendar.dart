@@ -54,6 +54,22 @@ class _ChallengeCalendarState extends State<ChallengeCalendar> {
 
     await imagesCollection
         .set({'isConfirm': isConfirm}, SetOptions(merge: true));
+
+    final challengeUploaderDoc =
+        FirebaseFirestore.instance.collection("users").doc(userId);
+    final imageUploaderDoc =
+        FirebaseFirestore.instance.collection("users").doc(imageUploader);
+    if (isConfirm) {
+      await challengeUploaderDoc
+          .set({'points': FieldValue.increment(5)}, SetOptions(merge: true));
+      await imageUploaderDoc
+          .set({'points': FieldValue.increment(10)}, SetOptions(merge: true));
+    } else {
+      await challengeUploaderDoc
+          .set({'points': FieldValue.increment(-5)}, SetOptions(merge: true));
+      await imageUploaderDoc
+          .set({'points': FieldValue.increment(-10)}, SetOptions(merge: true));
+    }
   }
 
   void addLike(String imageUploader, String imageId, bool isLike) async {
@@ -64,14 +80,21 @@ class _ChallengeCalendarState extends State<ChallengeCalendar> {
         .doc(imageUploader)
         .collection(imageUploader)
         .doc(imageId);
+    final userDoc = FirebaseFirestore.instance.collection("users").doc(userId);
 
-    isLike
-        ? imagesCollection.update({
-            "likes": FieldValue.arrayUnion([userId])
-          })
-        : imagesCollection.update({
-            "likes": FieldValue.arrayRemove([userId])
-          });
+    if (isLike) {
+      await imagesCollection.update({
+        "likes": FieldValue.arrayUnion([userId])
+      });
+      await userDoc
+          .set({'points': FieldValue.increment(5)}, SetOptions(merge: true));
+    } else {
+      await imagesCollection.update({
+        "likes": FieldValue.arrayRemove([userId])
+      });
+      await userDoc
+          .set({'points': FieldValue.increment(-5)}, SetOptions(merge: true));
+    }
   }
 
   @override
@@ -229,7 +252,7 @@ class _ChallengeCalendarState extends State<ChallengeCalendar> {
                                                               Color(0xff5F50B1),
                                                         )),
                                               Text(
-                                                likesCount == 0
+                                                likesCount <= 1
                                                     ? '$likesCount like'
                                                     : '$likesCount likes',
                                                 style: TextStyle(

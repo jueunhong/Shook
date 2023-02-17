@@ -71,7 +71,7 @@ class _MissionPageState extends State<MissionPage> {
       'imageUploaders': FieldValue.arrayUnion([userId])
     }, SetOptions(merge: true));
     await imageUploaderDoc
-        .set({'points': FieldValue.increment(5)}, SetOptions(merge: true));
+        .set({'points': FieldValue.increment(10)}, SetOptions(merge: true));
   }
 
   Stream<List<ImageFromMission>> getImagesFromMission() {
