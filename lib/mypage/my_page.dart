@@ -187,7 +187,9 @@ class _MyPageState extends State<MyPage> with TickerProviderStateMixin {
                 userId: uid!,
               ),
             ),
-            MyChallengeTap()
+            MyChallengeTap(
+              userId: uid!,
+            )
           ]),
         ),
         // Center(

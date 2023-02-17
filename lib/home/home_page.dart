@@ -6,8 +6,9 @@ import 'package:flutter/material.dart';
 import '../fonts.dart';
 
 import 'challengeTap.dart';
+import 'createChallenge.dart';
 import 'missionTap.dart';
-import 'createmission_page.dart';
+import 'createMission.dart';
 
 import '../mypage/my_page.dart';
 
