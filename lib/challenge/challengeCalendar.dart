@@ -120,7 +120,7 @@ class _ChallengeCalendarState extends State<ChallengeCalendar> {
                         return StatefulBuilder(builder: (context, setState) {
                           return AlertDialog(
                             content: SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.7,
+                              height: 450,
                               child: SizedBox(
                                 width: 100,
                                 height: 300,
