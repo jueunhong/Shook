@@ -181,13 +181,12 @@ class _MyPageState extends State<MyPage> with TickerProviderStateMixin {
         ),
         Expanded(
           child: TabBarView(controller: _tabController, children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: MyMissionTab(
-                userId: uid!,
-              ),
+            MyMissionTab(
+              userId: uid!,
             ),
-            MyChallengeTap()
+            MyChallengeTap(
+              userId: uid!,
+            )
           ]),
         ),
         // Center(

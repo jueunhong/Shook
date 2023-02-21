@@ -49,6 +49,7 @@ dependencies:
   flutter_local_notifications: ^13.0.0
   get: ^4.6.5
   web3dart: ^2.5.1
+  flutter_svg: ^1.1.6
 
 dev_dependencies:
   flutter_test:
