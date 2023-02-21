@@ -118,7 +118,7 @@ class _MyMissionTabState extends State<MyMissionTab> {
                                     spreadRadius: 1,
                                     offset: const Offset(4, 4))
                               ]),
-                          height: 120,
+                          height: 100,
                           width: 80,
                           child: Padding(
                             padding: const EdgeInsets.all(2.5),

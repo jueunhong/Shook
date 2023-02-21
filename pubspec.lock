@@ -306,8 +306,12 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_svg
+<<<<<<< HEAD:camera_app/pubspec.lock
       sha256: "6ff9fa12892ae074092de2fa6a9938fb21dbabfdaa2ff57dc697ff912fc8d4b2"
       url: "https://pub.dev"
+=======
+      url: "https://pub.dartlang.org"
+>>>>>>> 058eea1debfae2c4619d14cb7451a0dd69894e5d:pubspec.lock
     source: hosted
     version: "1.1.6"
   flutter_test:
@@ -468,16 +472,24 @@ packages:
     dependency: transitive
     description:
       name: path_drawing
+<<<<<<< HEAD:camera_app/pubspec.lock
       sha256: bbb1934c0cbb03091af082a6389ca2080345291ef07a5fa6d6e078ba8682f977
       url: "https://pub.dev"
+=======
+      url: "https://pub.dartlang.org"
+>>>>>>> 058eea1debfae2c4619d14cb7451a0dd69894e5d:pubspec.lock
     source: hosted
     version: "1.0.1"
   path_parsing:
     dependency: transitive
     description:
       name: path_parsing
+<<<<<<< HEAD:camera_app/pubspec.lock
       sha256: e3e67b1629e6f7e8100b367d3db6ba6af4b1f0bb80f64db18ef1fbabd2fa9ccf
       url: "https://pub.dev"
+=======
+      url: "https://pub.dartlang.org"
+>>>>>>> 058eea1debfae2c4619d14cb7451a0dd69894e5d:pubspec.lock
     source: hosted
     version: "1.0.1"
   petitparser:
